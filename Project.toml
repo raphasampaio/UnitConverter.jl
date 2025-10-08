@@ -1,0 +1,17 @@
+name = "UnitConverter"
+uuid = "9a1eac57-3412-4948-b4ec-4c8050addad8"
+version = "0.1.0"
+
+[deps]
+
+[compat]
+Aqua = "0.8"
+Test = "1.9 - 1.11"
+julia = "1.9"
+
+[extras]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Aqua", "Test"]
