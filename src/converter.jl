@@ -1,5 +1,3 @@
-# Main conversion function
-
 function convert_unit(from_unit::String, to_unit::String)::Float64
     return convert_unit(1.0, from_unit, to_unit)
 end
