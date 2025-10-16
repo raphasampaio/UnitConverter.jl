@@ -2,10 +2,15 @@
 # This module handles the reduction of any unit expression to its base units
 
 # Reduce a parsed UnitExpression to base SI units
-# Returns (factor, base_dimensions) where base_dimensions is Dict{String, Rational{Int}}
-function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Dict{String, Rational{Int}}}
+# Returns (factor, offset, base_dimensions)
+# Note: offset is only meaningful for simple units (single component with exponent 1)
+function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Float64, Dict{String, Rational{Int}}}
     total_factor = 1.0
+    total_offset = 0.0
     base_dimensions = Dict{String, Rational{Int}}()
+
+    # Check if this is a simple unit that can have an offset
+    has_offset = length(expr.components) == 1 && expr.components[1][2] == 1//1
 
     for (unit, exponent) in expr.components
         # Get the base decomposition for this unit
@@ -13,6 +18,20 @@ function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Dict{String, Ratio
 
         # Multiply factor raised to the exponent
         total_factor *= decomp.factor ^ Float64(exponent)
+
+        # Handle offset (only for simple units with exponent = 1)
+        if has_offset && exponent == 1//1
+            total_offset = decomp.offset
+        elseif decomp.offset != 0.0
+            # Error if trying to use affine unit in compound expression or with exponent != 1
+            if exponent != 1//1
+                error("Cannot use affine unit '$unit' with exponent $exponent. " *
+                      "Affine units (like absolute temperature scales) can only be used with exponent 1.")
+            else
+                error("Cannot use affine unit '$unit' in compound expressions. " *
+                      "Affine units (like absolute temperature scales) must be used alone.")
+            end
+        end
 
         # Add dimensions (with exponent applied)
         for (base_unit, base_exp) in decomp.dimensions
@@ -29,11 +48,11 @@ function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Dict{String, Ratio
     # Remove dimensions with zero exponent
     filter!(p -> p.second != 0//1, base_dimensions)
 
-    return (total_factor, base_dimensions)
+    return (total_factor, total_offset, base_dimensions)
 end
 
 # Reduce a unit string to base units
-function reduce_unit_string(unit_str::String)::Tuple{Float64, Dict{String, Rational{Int}}}
+function reduce_unit_string(unit_str::String)::Tuple{Float64, Float64, Dict{String, Rational{Int}}}
     expr = parse_unit(unit_str)
     return reduce_to_base(expr)
 end

@@ -13,15 +13,24 @@ const SI_BASE_UNITS = Set([
 ])
 
 # Struct to represent a unit in terms of base units
+# Supports affine transformations: base_value = factor * unit_value + offset
 struct BaseUnitDecomposition
-    factor::Float64                          # multiplicative factor
+    factor::Float64                          # multiplicative scale factor
+    offset::Float64                          # additive offset (for affine units like temperature)
     dimensions::Dict{String, Rational{Int}}  # base unit -> exponent
 end
 
-# Helper constructor for simple units
-BaseUnitDecomposition(factor::Real) = BaseUnitDecomposition(Float64(factor), Dict{String, Rational{Int}}())
+# Helper constructors for simple units (no offset)
+BaseUnitDecomposition(factor::Real) =
+    BaseUnitDecomposition(Float64(factor), 0.0, Dict{String, Rational{Int}}())
 BaseUnitDecomposition(factor::Real, unit::String, exp::Rational{Int}) =
-    BaseUnitDecomposition(Float64(factor), Dict(unit => exp))
+    BaseUnitDecomposition(Float64(factor), 0.0, Dict(unit => exp))
+BaseUnitDecomposition(factor::Real, dimensions::Dict{String, Rational{Int}}) =
+    BaseUnitDecomposition(Float64(factor), 0.0, dimensions)
+
+# Helper constructors for affine units (with offset)
+BaseUnitDecomposition(factor::Real, offset::Real, unit::String, exp::Rational{Int}) =
+    BaseUnitDecomposition(Float64(factor), Float64(offset), Dict(unit => exp))
 
 # Registry mapping unit names to their base unit decomposition
 # This allows us to define derived units in terms of base units
@@ -70,6 +79,22 @@ const UNIT_REGISTRY = Dict{String, BaseUnitDecomposition}(
     "hr"       => BaseUnitDecomposition(3600.0, "s", 1//1),
     "day"      => BaseUnitDecomposition(86400.0, "s", 1//1),
     "week"     => BaseUnitDecomposition(604800.0, "s", 1//1),
+
+    # Temperature units
+    # Two types: absolute (with offset) and intervals/differences (no offset)
+
+    # Absolute temperature scales (use with convert_value for actual temperatures)
+    # Conversion to Kelvin: K = factor * T + offset
+    "kelvin"     => BaseUnitDecomposition(1.0, 0.0, "K", 1//1),        # K is the base
+    "celsius"    => BaseUnitDecomposition(1.0, 273.15, "K", 1//1),     # K = °C + 273.15
+    "fahrenheit" => BaseUnitDecomposition(5.0/9.0, 255.372222, "K", 1//1),  # K = (°F + 459.67) * 5/9
+    "rankine"    => BaseUnitDecomposition(5.0/9.0, 0.0, "K", 1//1),    # K = °R * 5/9
+
+    # Temperature intervals/differences (use with convert_unit for scale factors)
+    # These represent ΔT, not absolute temperature - no offset applied
+    "degC"       => BaseUnitDecomposition(1.0, "K", 1//1),             # 1°C interval = 1 K
+    "degF"       => BaseUnitDecomposition(5.0/9.0, "K", 1//1),         # 1°F interval = 5/9 K
+    "degR"       => BaseUnitDecomposition(5.0/9.0, "K", 1//1),         # 1°R interval = 5/9 K
 
     # Derived SI units
     "N"      => BaseUnitDecomposition(1.0, Dict("kg" => 1//1, "m" => 1//1, "s" => -2//1)),
