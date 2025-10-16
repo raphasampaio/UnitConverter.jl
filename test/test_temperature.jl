@@ -5,7 +5,6 @@ using UnitConverter
 
 @testset "Temperature" begin
     @testset "Temperature Intervals (Scale Factors Only)" begin
-        # These use convert_unit which returns only the scale factor
         @test convert_unit("degC", "degF") ≈ 1.8
         @test convert_unit("degF", "degC") ≈ 1/1.8
 

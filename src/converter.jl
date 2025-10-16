@@ -5,45 +5,26 @@
 
 Convert between two unit expressions and return the conversion scale factor.
 
-This function returns only the multiplicative scale factor, ignoring any offset.
-For actual value conversions with affine transformations (e.g., temperature),
-use `convert_value` instead.
+This is equivalent to `convert_value(1, from_unit, to_unit)` and returns how many
+`to_unit` units equal one `from_unit`.
 
 # Examples
 ```julia
-convert_unit("s", "minute")       # Returns 1/60 ≈ 0.01667
+convert_unit("s", "minute")       # Returns 1/60 ≈ 0.01667 (1 second = 1/60 minute)
 convert_unit("N", "kg*m/s^2")     # Returns 1.0
-convert_unit("km", "m")           # Returns 1000.0
+convert_unit("km", "m")           # Returns 1000.0 (1 km = 1000 m)
 convert_unit("degC", "degF")      # Returns 1.8 (temperature intervals)
 ```
 
-The function handles:
-- Simple unit conversions: "m" to "km"
-- Compound units: "N" to "kg*m/s^2"
-- Complex expressions: "kg*m^2/s^2" to "J"
-- Temperature intervals: "degC" to "degF"
+Note: For absolute temperature conversions with offsets (e.g., 0°C = 32°F),
+use `convert_value` with the actual temperature value.
 
 Throws an error if:
 - Units are unknown
 - Units are dimensionally incompatible
 """
 function convert_unit(from_unit::String, to_unit::String)::Float64
-    # Parse and reduce both units to base SI units
-    from_factor, from_offset, from_dims = reduce_unit_string(from_unit)
-    to_factor, to_offset, to_dims = reduce_unit_string(to_unit)
-
-    # Check dimensional compatibility
-    if !dimensions_compatible(from_dims, to_dims)
-        error("Cannot convert between incompatible units: " *
-              "'$from_unit' [$(format_dimensions(from_dims))] and " *
-              "'$to_unit' [$(format_dimensions(to_dims))]")
-    end
-
-    # Calculate conversion factor (scale only, ignoring offset)
-    # If from_unit = k1 * base_units and to_unit = k2 * base_units
-    # then from_unit = (k1/k2) * to_unit
-    # So conversion factor is k1/k2
-    return from_factor / to_factor
+    return convert_value(1.0, from_unit, to_unit)
 end
 
 """

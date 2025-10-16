@@ -85,10 +85,10 @@ const UNIT_REGISTRY = Dict{String, BaseUnitDecomposition}(
 
     # Absolute temperature scales (use with convert_value for actual temperatures)
     # Conversion to Kelvin: K = factor * T + offset
-    "kelvin"     => BaseUnitDecomposition(1.0, 0.0, "K", 1//1),        # K is the base
-    "celsius"    => BaseUnitDecomposition(1.0, 273.15, "K", 1//1),     # K = °C + 273.15
-    "fahrenheit" => BaseUnitDecomposition(5.0/9.0, 255.372222, "K", 1//1),  # K = (°F + 459.67) * 5/9
-    "rankine"    => BaseUnitDecomposition(5.0/9.0, 0.0, "K", 1//1),    # K = °R * 5/9
+    "kelvin"     => BaseUnitDecomposition(1.0, 0.0, "K", 1//1),               # K is the base
+    "celsius"    => BaseUnitDecomposition(1.0, 273.15, "K", 1//1),            # K = °C + 273.15
+    "fahrenheit" => BaseUnitDecomposition(5.0/9.0, 459.67*5.0/9.0, "K", 1//1),  # K = (°F + 459.67) * 5/9 = 5/9 * (°F + 459.67)
+    "rankine"    => BaseUnitDecomposition(5.0/9.0, 0.0, "K", 1//1),           # K = °R * 5/9
 
     # Temperature intervals/differences (use with convert_unit for scale factors)
     # These represent ΔT, not absolute temperature - no offset applied
