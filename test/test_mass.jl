@@ -10,13 +10,13 @@ using UnitConverter
     end
 
     @testset "Imperial to Metric" begin
-        @test convert_unit("lb", "kg") ≈ 0.453592
-        @test convert_unit("oz", "g") ≈ 28.3495
+        @test convert_unit("lb", "kg") ≈ 0.45359237
+        @test convert_unit("oz", "g") ≈ 28.349523125
     end
 
     @testset "Metric to Imperial" begin
-        @test convert_unit("kg", "lb") ≈ 1/0.453592
-        @test convert_unit("g", "oz") ≈ 1/28.3495
+        @test convert_unit("kg", "lb") ≈ 1/0.45359237
+        @test convert_unit("g", "oz") ≈ 1/28.349523125
     end
 end
 

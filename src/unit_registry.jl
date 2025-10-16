@@ -48,6 +48,10 @@ const UNIT_REGISTRY = Dict{String, BaseUnitDecomposition}(
     "feet"       => BaseUnitDecomposition(0.3048, "m", 1//1),
     "in"         => BaseUnitDecomposition(0.0254, "m", 1//1),
     "inch"       => BaseUnitDecomposition(0.0254, "m", 1//1),
+    "yd"         => BaseUnitDecomposition(0.9144, "m", 1//1),
+    "yard"       => BaseUnitDecomposition(0.9144, "m", 1//1),
+    "mi"         => BaseUnitDecomposition(1609.34, "m", 1//1),
+    "mile"       => BaseUnitDecomposition(1609.34, "m", 1//1),
 
     # Mass units (base: kilogram)
     "kilogram" => BaseUnitDecomposition(1.0, "kg", 1//1),
@@ -55,6 +59,8 @@ const UNIT_REGISTRY = Dict{String, BaseUnitDecomposition}(
     "gram"     => BaseUnitDecomposition(0.001, "kg", 1//1),
     "lb"       => BaseUnitDecomposition(0.45359237, "kg", 1//1),
     "pound"    => BaseUnitDecomposition(0.45359237, "kg", 1//1),
+    "oz"       => BaseUnitDecomposition(0.028349523125, "kg", 1//1),
+    "ounce"    => BaseUnitDecomposition(0.028349523125, "kg", 1//1),
 
     # Time units (base: second)
     "second"   => BaseUnitDecomposition(1.0, "s", 1//1),
