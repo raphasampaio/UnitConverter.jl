@@ -2,12 +2,8 @@ name = "UnitConverter"
 uuid = "9a1eac57-3412-4948-b4ec-4c8050addad8"
 version = "0.1.0"
 
-[deps]
-Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
-
 [compat]
 Aqua = "0.8"
-Graphs = "1.13.1"
 Test = "1.9 - 1.12"
 julia = "1.9"
 

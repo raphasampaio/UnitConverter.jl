@@ -22,18 +22,6 @@ Throws an error if:
 - Units are dimensionally incompatible
 """
 function convert_unit(from_unit::String, to_unit::String)::Float64
-    # Try simple graph-based lookup first (more efficient for simple conversions)
-    graph_result = find_conversion_path(from_unit, to_unit)
-    if graph_result !== nothing
-        return graph_result
-    end
-
-    # Fall back to dimensional analysis for compound units
-    return convert_unit_dimensional(from_unit, to_unit)
-end
-
-# Convert using dimensional analysis
-function convert_unit_dimensional(from_unit::String, to_unit::String)::Float64
     # Parse and reduce both units to base SI units
     from_factor, from_dims = reduce_unit_string(from_unit)
     to_factor, to_dims = reduce_unit_string(to_unit)
