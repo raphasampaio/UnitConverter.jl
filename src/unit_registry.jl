@@ -83,18 +83,12 @@ const UNIT_REGISTRY = Dict{String, BaseUnitDecomposition}(
     # Temperature units
     # Two types: absolute (with offset) and intervals/differences (no offset)
 
-    # Absolute temperature scales (use with convert_value for actual temperatures)
+    # Absolute temperature scales (use with convert_unit for actual temperatures)
     # Conversion to Kelvin: K = factor * T + offset
     "kelvin"     => BaseUnitDecomposition(1.0, 0.0, "K", 1//1),               # K is the base
     "celsius"    => BaseUnitDecomposition(1.0, 273.15, "K", 1//1),            # K = °C + 273.15
     "fahrenheit" => BaseUnitDecomposition(5.0/9.0, 459.67*5.0/9.0, "K", 1//1),  # K = (°F + 459.67) * 5/9 = 5/9 * (°F + 459.67)
     "rankine"    => BaseUnitDecomposition(5.0/9.0, 0.0, "K", 1//1),           # K = °R * 5/9
-
-    # Temperature intervals/differences (use with convert_unit for scale factors)
-    # These represent ΔT, not absolute temperature - no offset applied
-    "degC"       => BaseUnitDecomposition(1.0, "K", 1//1),             # 1°C interval = 1 K
-    "degF"       => BaseUnitDecomposition(5.0/9.0, "K", 1//1),         # 1°F interval = 5/9 K
-    "degR"       => BaseUnitDecomposition(5.0/9.0, "K", 1//1),         # 1°R interval = 5/9 K
 
     # Derived SI units
     "N"      => BaseUnitDecomposition(1.0, Dict("kg" => 1//1, "m" => 1//1, "s" => -2//1)),

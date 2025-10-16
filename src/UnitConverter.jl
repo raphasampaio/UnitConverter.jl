@@ -1,7 +1,7 @@
 module UnitConverter
 
 # Export main conversion functions
-export convert_unit, convert_value
+export convert_unit, convert_unit
 
 # Include submodules
 include("unit_registry.jl")
