@@ -29,18 +29,10 @@ function parse_unit(unit_str::String)::UnitExpression
         numerator_components = parse_product(parts[1], 1)
     end
 
-    # Parse denominator (everything after first /)
+    # Parse denominator (each part after / is in denominator)
+    # e.g., "kg/m/s^2" = kg * m^-1 * s^-2
     if length(parts) >= 2
-        # Join remaining parts with / in case there are multiple divisions
-        denominator_str = join(parts[2:end], "/")
-        if !isempty(denominator_str)
-            denominator_components = parse_product(denominator_str, -1)
-        end
-    end
-
-    if length(parts) > 2
-        # Handle cases like "kg*m/s/s" by treating additional / as multiplying in denominator
-        for i in 3:length(parts)
+        for i in 2:length(parts)
             if !isempty(parts[i])
                 append!(denominator_components, parse_product(parts[i], -1))
             end
@@ -57,7 +49,7 @@ function parse_unit(unit_str::String)::UnitExpression
 end
 
 # Parse a product expression like "kg*m^2"
-function parse_product(expr::String, sign::Int)::Vector{Tuple{String, Rational{Int}}}
+function parse_product(expr::AbstractString, sign::Int)::Vector{Tuple{String, Rational{Int}}}
     if isempty(expr)
         return Tuple{String, Rational{Int}}[]
     end
@@ -96,7 +88,7 @@ function parse_product(expr::String, sign::Int)::Vector{Tuple{String, Rational{I
 end
 
 # Parse an exponent string (can be "2" or "-2" or "1/2")
-function parse_exponent(exp_str::String)::Rational{Int}
+function parse_exponent(exp_str::AbstractString)::Rational{Int}
     exp_str = strip(exp_str)
 
     # Check if it's a fraction
@@ -129,8 +121,8 @@ function combine_like_units(components::Vector{Tuple{String, Rational{Int}}})::V
     # Remove units with zero exponent
     filter!(p -> p.second != 0//1, combined)
 
-    # Convert back to vector and sort for consistency
-    result = collect(combined)
+    # Convert back to vector of tuples and sort for consistency
+    result = [(k, v) for (k, v) in combined]
     sort!(result, by=x->x[1])
 
     return result
