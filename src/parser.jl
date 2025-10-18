@@ -106,8 +106,9 @@ function parse_unit(unit_str::String)::UnitExpression
     # Remove outer parentheses if they wrap the entire expression
     unit_str = strip_outer_parentheses(unit_str)
 
+    # Empty string represents dimensionless (no units)
     if isempty(unit_str)
-        error("Empty unit string")
+        return UnitExpression()
     end
 
     # Split by division first (but not inside parentheses)

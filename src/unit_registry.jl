@@ -150,6 +150,19 @@ function build_unit_registry()
     registry["degF"] = BaseUnitDecomposition(5.0/9.0, "K", 1//1)       # 1°F difference = 5/9 K
     registry["degR"] = BaseUnitDecomposition(5.0/9.0, "K", 1//1)       # 1°R difference = 5/9 K
 
+    # ========== Dimensionless Units ==========
+    # Percent (1% = 0.01 = 1/100)
+    registry["%"] = BaseUnitDecomposition(0.01)
+
+    # Currency (dollar - dimensionless for unit analysis)
+    registry["\$"] = BaseUnitDecomposition(1.0)
+
+    # SI-prefixed dollars (T$, G$, M$, k$, etc.)
+    for (prefix, scale) in SI_PREFIXES
+        prefixed_name = prefix * "\$"
+        registry[prefixed_name] = BaseUnitDecomposition(scale)
+    end
+
     # ========== Angle Units ==========
     registry["rad"]    = BaseUnitDecomposition(1.0)  # dimensionless base
     registry["radian"] = BaseUnitDecomposition(1.0)
@@ -173,6 +186,16 @@ function build_unit_registry()
             prefixed_name_lower = prefix * "l"
             registry[prefixed_name_lower] = BaseUnitDecomposition(0.001 * scale, liter_dims)
         end
+    end
+
+    # US Gallon (1 US gal = 3.785411784 L = 0.003785411784 m³)
+    registry["gal"]    = BaseUnitDecomposition(0.003785411784, liter_dims)
+    registry["gallon"] = BaseUnitDecomposition(0.003785411784, liter_dims)
+
+    # SI prefixed gallons (Tgal, Ggal, Mgal, kgal, etc.)
+    for (prefix, scale) in SI_PREFIXES
+        prefixed_name = prefix * "gal"
+        registry[prefixed_name] = BaseUnitDecomposition(0.003785411784 * scale, liter_dims)
     end
 
     # ========== Derived SI Units ==========
