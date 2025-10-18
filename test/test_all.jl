@@ -5,12 +5,19 @@ using UnitConverter
 
 @testset "All" begin
     @test convert_unit("(m3/s)*(hour)", "hm3") ≈ 0.003600
+    @test convert_unit("hm3", "(m3/s)*(hour)") ≈ 277.77777778
 
     @test convert_unit("", "%") ≈ 100.0
-    # @test convert_unit("(\$/MWh)/(\$/MWh)", "") ≈ 1.0
-    # @test convert_unit("(\$/MWh)/(1)", "\$/MWh") ≈ 1.0
-    # @test convert_unit("(gal/MWh)*(\$/gal)", "\$/MWh") ≈ 1.0
+    @test convert_unit("%", "") ≈ 0.01
+
+    @test convert_unit("(\$/MWh)/(\$/MWh)", "") ≈ 1.0
+    @test convert_unit("", "(\$/MWh)/(\$/MWh)") ≈ 1.0
+
+    @test convert_unit("(gal/MWh)*(\$/gal)", "\$/MWh") ≈ 1.0
+    @test convert_unit("\$/MWh", "(gal/MWh)*(\$/gal)") ≈ 1.0
+
     # @test convert_unit("(GWh)*(\$/MWh)", "k\$") ≈ 1.0
+
     # @test convert_unit("(m3/s)*(hour)", "hm3") ≈ 0.003600
     # @test convert_unit("\$/MWh", "\$/GWh") ≈ 1000.0
     # @test convert_unit("GWh", "MW * hour") ≈ 1000.0
