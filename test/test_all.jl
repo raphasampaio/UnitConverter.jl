@@ -4,6 +4,8 @@ using Test
 using UnitConverter
 
 @testset "All" begin
+    @test convert_unit("(m3/s)*(hour)", "hm3") ≈ 0.003600
+
     @test convert_unit("degC", "degF") ≈ 1.8
     @test convert_unit("degF", "degC") ≈ 0.55555556
 
@@ -729,6 +731,60 @@ using UnitConverter
 
     @test convert_unit("MW * h", "MWh") ≈ 1
     @test convert_unit("MWh", "MW * h") ≈ 1
+
+    @test convert_unit("kW*h", "J") ≈ 3.6e6
+    @test convert_unit("J", "kW*h") ≈ 1 / 3.6e6
+
+    @test convert_unit("N*m", "J") ≈ 1
+    @test convert_unit("J", "N*m") ≈ 1
+
+    @test convert_unit("kgf*m", "J") ≈ 9.80665
+    @test convert_unit("J", "kgf*m") ≈ 1 / 9.80665
+
+    @test convert_unit("lbf*ft", "J") ≈ 1.3558179483314 atol=1e-6
+    @test convert_unit("J", "lbf*ft") ≈ 1 / 1.3558179483314 atol=1e-6
+    @test convert_unit("m/s", "ft/s") ≈ 3.2808399 atol=1e-6
+    @test convert_unit("km/h", "mi/h") ≈ 0.6213727366498069 atol=1e-6
+    @test convert_unit("mi/h", "km/h") ≈ 1.609344 atol=1e-5
+    @test convert_unit("ft/s", "m/s") ≈ 0.3048
+    @test convert_unit("m/s^2", "ft/s^2") ≈ 3.2808399 atol=1e-6
+    @test convert_unit("ft/s^2", "m/s^2") ≈ 0.3048
+    @test convert_unit("kg/m^3", "lb/ft^3") ≈ 0.062427961 atol=1e-8
+    @test convert_unit("kg/m^3", "g/cm^3") ≈ 0.001
+    @test convert_unit("lb/ft^3", "kg/m^3") ≈ 16.018463373960138 atol=1e-6
+    @test convert_unit("lb/ft^3", "g/cm^3") ≈ 0.016018463373960138 atol=1e-9
+    @test convert_unit("g/cm^3", "kg/m^3") ≈ 1000
+    @test convert_unit("g/cm^3", "lb/ft^3") ≈ 62.427961 atol=1e-5
+    @test convert_unit("N/m^2", "lbf/in^2") ≈ 0.00014503774 atol=1e-10
+    @test convert_unit("N/m^2", "atm") ≈ 9.8692327e-06 atol=1e-12
+    @test convert_unit("N/m^2", "bar") ≈ 1e-05
+    @test convert_unit("N/m^2", "psi") ≈ 0.00014503774 atol=1e-10
+    @test convert_unit("lbf/in^2", "N/m^2") ≈ 6894.7573
+    @test convert_unit("lbf/in^2", "atm") ≈ 0.068045964 atol=1e-8
+    @test convert_unit("lbf/in^2", "bar") ≈ 0.068947573
+    @test convert_unit("lbf/in^2", "psi") ≈ 1
+    @test convert_unit("atm", "N/m^2") ≈ 101325
+    @test convert_unit("atm", "lbf/in^2") ≈ 14.695949 atol=1e-5
+    @test convert_unit("atm", "bar") ≈ 1.01325
+    @test convert_unit("atm", "psi") ≈ 14.695949 atol=1e-5
+    @test convert_unit("bar", "N/m^2") ≈ 100000
+    @test convert_unit("bar", "lbf/in^2") ≈ 14.503774 atol=1e-5
+    @test convert_unit("bar", "atm") ≈ 0.98692327
+    @test convert_unit("bar", "psi") ≈ 14.503774 atol=1e-5
+    @test convert_unit("psi", "N/m^2") ≈ 6894.7573
+    @test convert_unit("psi", "lbf/in^2") ≈ 1
+    @test convert_unit("psi", "atm") ≈ 0.068045964 atol=1e-8
+    @test convert_unit("psi", "bar") ≈ 0.068947573
+    @test convert_unit("J/s", "hp") ≈ 0.0013410221 atol=1e-9
+    @test convert_unit("J/s", "kW") ≈ 0.001
+    @test convert_unit("hp", "J/s") ≈ 745.69987
+    @test convert_unit("hp", "kW") ≈ 0.74569987
+    @test convert_unit("kW", "J/s") ≈ 1000
+    @test convert_unit("kW", "hp") ≈ 1.3410221 atol=1e-6
+    @test convert_unit("N*s", "lbf*s") ≈ 0.2248089438709618 atol=1e-8
+    @test convert_unit("lbf*s", "N*s") ≈ 4.4482216
+    @test convert_unit("deg/s", "rpm") ≈ 0.16666666666666669 atol=1e-8
+    @test convert_unit("rpm", "deg/s") ≈ 6
 end
 
 end

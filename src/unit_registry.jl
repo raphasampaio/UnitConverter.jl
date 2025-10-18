@@ -181,6 +181,12 @@ function build_unit_registry()
     registry["N"]      = BaseUnitDecomposition(1.0, newton_dims)
     registry["newton"] = BaseUnitDecomposition(1.0, newton_dims)
 
+    # Force: kilogram-force (kgf = 9.80665 N, force due to 1 kg mass in Earth's gravity)
+    registry["kgf"] = BaseUnitDecomposition(9.80665, newton_dims)
+
+    # Force: pound-force (lbf = 4.4482216 N)
+    registry["lbf"] = BaseUnitDecomposition(4.4482216, newton_dims)
+
     # Energy: Joule (kg⋅m²/s²)
     joule_dims = Dict("kg" => 1//1, "m" => 2//1, "s" => -2//1)
     registry["J"]     = BaseUnitDecomposition(1.0, joule_dims)
@@ -193,17 +199,36 @@ function build_unit_registry()
     registry["watt"] = BaseUnitDecomposition(1.0, watt_dims)
     merge!(registry, generate_si_prefixed_derived_units("W", watt_dims))
 
+    # Power: horsepower (hp = 745.69987 W)
+    registry["hp"] = BaseUnitDecomposition(745.69987, watt_dims)
+
     # Pressure: Pascal (kg/(m⋅s²))
     pascal_dims = Dict("kg" => 1//1, "m" => -1//1, "s" => -2//1)
     registry["Pa"]     = BaseUnitDecomposition(1.0, pascal_dims)
     registry["pascal"] = BaseUnitDecomposition(1.0, pascal_dims)
     merge!(registry, generate_si_prefixed_derived_units("Pa", pascal_dims))
 
+    # Pressure: atmosphere (atm = 101325 Pa)
+    registry["atm"] = BaseUnitDecomposition(101325.0, pascal_dims)
+
+    # Pressure: bar (bar = 100000 Pa)
+    registry["bar"] = BaseUnitDecomposition(100000.0, pascal_dims)
+
+    # Pressure: pounds per square inch (psi = lbf/in² = 6894.7573 Pa)
+    registry["psi"] = BaseUnitDecomposition(6894.7573, pascal_dims)
+
     # Frequency: Hertz (1/s)
     hertz_dims = Dict("s" => -1//1)
     registry["Hz"]    = BaseUnitDecomposition(1.0, hertz_dims)
     registry["hertz"] = BaseUnitDecomposition(1.0, hertz_dims)
     merge!(registry, generate_si_prefixed_derived_units("Hz", hertz_dims))
+
+    # Angular velocity: revolutions per minute
+    # Note: rpm is an angular velocity unit that's compatible with deg/s
+    # Since "deg" converts to radians with factor π/180, and 1 revolution = 2π radians:
+    # 1 rpm = 1 rev/min = 2π rad/60 s = π/30 rad/s
+    # This makes it compatible with deg/s which has factor π/180 rad/s
+    registry["rpm"] = BaseUnitDecomposition(π/30.0, hertz_dims)
 
     # Electric charge: Coulomb (A⋅s)
     coulomb_dims = Dict("A" => 1//1, "s" => 1//1)
@@ -214,6 +239,20 @@ function build_unit_registry()
     volt_dims = Dict("kg" => 1//1, "m" => 2//1, "s" => -3//1, "A" => -1//1)
     registry["V"]    = BaseUnitDecomposition(1.0, volt_dims)
     registry["volt"] = BaseUnitDecomposition(1.0, volt_dims)
+
+    # ========== Common Energy Units (Watt-hours) ==========
+    # Watt-hour: Wh (same dimensions as Joule: kg⋅m²/s²)
+    # 1 Wh = 1 W * 1 h = 1 W * 3600 s = 3600 J
+    wh_dims = Dict("kg" => 1//1, "m" => 2//1, "s" => -2//1)
+    registry["Wh"] = BaseUnitDecomposition(3600.0, wh_dims)
+
+    # SI prefixed Watt-hours (TWh, GWh, MWh, kWh, etc.)
+    # Note: scale is applied to the power, not the energy
+    # e.g., 1 kWh = 1000 W * 3600 s = 3,600,000 J
+    for (prefix, scale) in SI_PREFIXES
+        prefixed_name = prefix * "Wh"
+        registry[prefixed_name] = BaseUnitDecomposition(3600.0 * scale, wh_dims)
+    end
 
     return registry
 end
