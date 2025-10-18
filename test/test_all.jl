@@ -723,6 +723,12 @@ using UnitConverter
     @test convert_unit("kW", "TW") ≈ 1e-09
     @test convert_unit("kW", "GW") ≈ 1e-06
     @test convert_unit("kW", "MW") ≈ 0.001
+
+    @test convert_unit("hm^3", "l") ≈ 1e+09
+    @test convert_unit("l", "hm^3") ≈ 1e-09
+
+    @test convert_unit("MW * h", "MWh") ≈ 1
+    @test convert_unit("MWh", "MW * h") ≈ 1
 end
 
 end
