@@ -1,2 +1,6 @@
 from, to, factor
 (m3/s)*(hour), hm3, 0.003600
+kgal, hm3, 4.5460900000000005e-06
+$/MWh, $/GWh, 1000.0
+($/MWh)/($/MWh), , 1.0
+($/MWh)/(1), $/MWh, 1.0
