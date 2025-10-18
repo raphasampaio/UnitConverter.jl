@@ -6,6 +6,18 @@ using UnitConverter
 @testset "All" begin
     @test convert_unit("(m3/s)*(hour)", "hm3") ≈ 0.003600
 
+    @test convert_unit("", "%") ≈ 100.0
+    # @test convert_unit("(\$/MWh)/(\$/MWh)", "") ≈ 1.0
+    # @test convert_unit("(\$/MWh)/(1)", "\$/MWh") ≈ 1.0
+    # @test convert_unit("(gal/MWh)*(\$/gal)", "\$/MWh") ≈ 1.0
+    # @test convert_unit("(GWh)*(\$/MWh)", "k\$") ≈ 1.0
+    # @test convert_unit("(m3/s)*(hour)", "hm3") ≈ 0.003600
+    # @test convert_unit("\$/MWh", "\$/GWh") ≈ 1000.0
+    # @test convert_unit("GWh", "MW * hour") ≈ 1000.0
+    # @test convert_unit("kgal", "hm3") ≈ 4.54609e-06
+    # @test convert_unit("(m3/s)*(MW/(m3/s))", "GWh * hour") ≈ 0.001
+    # @test convert_unit("GWh", "MW * hour") ≈ 1000.0
+
     @test convert_unit("degC", "degF") ≈ 1.8
     @test convert_unit("degF", "degC") ≈ 0.55555556
 
