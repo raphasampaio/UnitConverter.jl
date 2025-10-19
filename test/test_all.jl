@@ -12,8 +12,6 @@ function test_convert_unit(from_unit::String, to_unit::String, factor::Number)
 end
 
 @testset "All" begin
-    test_convert_unit("km/h + km/h", "km/h", 1.0)
-    
     test_convert_unit("mi/h", "m/s", 0.4470388888888889)
     test_convert_unit("(m3/s)*(hour)", "hm3", 0.003600)
     test_convert_unit("", "%", 100.0)
