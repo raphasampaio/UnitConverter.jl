@@ -780,6 +780,116 @@ end
     # test_convert_unit("lbf*s", "N*s", 4.4482216
     # test_convert_unit("deg/s", "rpm", 0.16666666666666669 atol = 1e-8
     # test_convert_unit("rpm", "deg/s", 6
+
+    # ========== Complex Unit Operations: Multiplication & Division ==========
+
+    # Velocity (distance/time)
+    test_convert_unit("m/s", "km/hr", 3.6)
+    test_convert_unit("km/hr", "m/s", 1/3.6)
+    test_convert_unit("mi/hr", "ft/s", 1609.34/0.3048/3600)
+    test_convert_unit("cm/min", "m/hr", 0.6)
+
+    # Acceleration (distance/time²)
+    test_convert_unit("m/s^2", "km/hr^2", 12960.0)
+    test_convert_unit("ft/s^2", "in/s^2", 12.0)
+    test_convert_unit("cm/s^2", "m/min^2", 36.0)
+
+    # Force (mass × acceleration)
+    test_convert_unit("kg*m/s^2", "N", 1.0)
+    test_convert_unit("g*cm/s^2", "N", 1e-5)
+    test_convert_unit("kg*km/hr^2", "N", 1/12960.0)
+
+    # Energy/Work (force × distance)
+    test_convert_unit("N*m", "kg*m^2/s^2", 1.0)
+    test_convert_unit("N*km", "kJ", 1.0)
+    test_convert_unit("g*cm^2/s^2", "J", 1e-7)
+
+    # Power (energy/time)
+    test_convert_unit("J/s", "W", 1.0)
+    test_convert_unit("kJ/hr", "W", 1/3.6)
+    test_convert_unit("MJ/day", "kW", 1000.0/86400.0)
+    test_convert_unit("N*m/s", "W", 1.0)
+
+    # Pressure (force/area)
+    test_convert_unit("N/m^2", "Pa", 1.0)
+    test_convert_unit("Pa*m^2", "N", 1.0)
+    test_convert_unit("kg/(m*s^2)", "Pa", 1.0)
+
+    # Density (mass/volume)
+    test_convert_unit("kg/m^3", "g/cm^3", 0.001)
+    test_convert_unit("kg/L", "g/mL", 1.0)
+    test_convert_unit("g/mL", "kg/m^3", 1000.0)
+    test_convert_unit("kg/gal", "g/L", 264.172)
+
+    # Flow rate (volume/time)
+    test_convert_unit("m^3/s", "L/s", 1000.0)
+    test_convert_unit("L/min", "mL/s", 1000.0/60.0)
+    test_convert_unit("gal/hr", "L/min", 3.785411784/60.0)
+    test_convert_unit("m^3/hr", "L/s", 1000.0/3600.0)
+
+    # Mass flow rate (mass/time)
+    test_convert_unit("kg/s", "g/min", 60000.0)
+    test_convert_unit("kg/hr", "g/s", 1000.0/3600.0)
+    test_convert_unit("lb/min", "kg/hr", 0.45359237*60.0)
+
+    # Specific energy (energy/mass)
+    test_convert_unit("J/kg", "kJ/g", 0.001)
+    test_convert_unit("kJ/kg", "J/g", 1.0)
+    test_convert_unit("Wh/kg", "kJ/kg", 3.6)
+    test_convert_unit("MJ/kg", "kWh/kg", 1000.0/3600.0)
+
+    # Energy density (energy/volume)
+    test_convert_unit("J/m^3", "kJ/L", 0.001)
+    test_convert_unit("Wh/L", "kJ/m^3", 3600.0)
+    test_convert_unit("MWh/m^3", "kWh/L", 1000.0)
+
+    # Frequency (1/time)
+    test_convert_unit("Hz", "s^-1", 1.0)
+    test_convert_unit("kHz", "Hz", 1000.0)
+    test_convert_unit("min^-1", "hr^-1", 60.0)
+
+    # Angular velocity
+    test_convert_unit("rad/s", "deg/s", 180.0/π)
+    test_convert_unit("rpm", "rad/s", π/30.0)
+    test_convert_unit("deg/min", "rad/hr", π/180.0*60.0)
+
+    # Viscosity (pressure × time)
+    test_convert_unit("Pa*s", "N*s/m^2", 1.0)
+    test_convert_unit("Pa*s", "kg/(m*s)", 1.0)
+
+    # Thermal conductivity (power / (length × temperature))
+    test_convert_unit("W/(m*K)", "J/(s*m*K)", 1.0)
+    test_convert_unit("kW/(m*K)", "W/(cm*K)", 10.0)
+
+    # Electric current density (current/area)
+    test_convert_unit("A/m^2", "A/cm^2", 0.0001)
+    test_convert_unit("mA/mm^2", "A/m^2", 1000.0)
+
+    # Charge density (charge/volume)
+    test_convert_unit("C/m^3", "C/L", 0.001)
+
+    # Complex compound units
+    test_convert_unit("kg*m^2/s^3", "W", 1.0)
+    test_convert_unit("kg/(m*s^2)", "Pa", 1.0)
+    test_convert_unit("kg*m^2/(s^2*A)", "V*C", 1.0)
+
+    # Multi-step dimensional analysis
+    test_convert_unit("(kg*m/s^2)*m", "J", 1.0)
+    test_convert_unit("(J/s)/m^2", "W/m^2", 1.0)
+    test_convert_unit("(N/m^2)/(kg/m^3)", "m/s^2", 1.0)
+
+    # Power per unit area (irradiance)
+    test_convert_unit("W/m^2", "kW/km^2", 1000000.0)
+    test_convert_unit("MW/km^2", "W/m^2", 1.0)
+
+    # Monetary units with physical units
+    test_convert_unit("\$/kWh", "\$/J", 1.0/3600000.0)
+    test_convert_unit("\$/L", "\$/mL", 0.001)
+    test_convert_unit("k\$/MWh", "\$/kWh", 1.0)
+
+    # Volume flow × pressure (power)
+    test_convert_unit("(L/s)*(kPa)", "W", 1.0)
+    test_convert_unit("(m^3/hr)*(Pa)", "W", 1.0/3600.0)
 end
 
 end
