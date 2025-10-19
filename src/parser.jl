@@ -172,7 +172,7 @@ function parse_product(expr::AbstractString, sign::Int)::Vector{Tuple{String, Ra
             for (unit, exp) in sub_expr.components
                 push!(components, (unit, sign * exp))
             end
-        # Check for exponent
+            # Check for exponent
         elseif occursin('^', factor_stripped)
             parts = smart_split(factor_stripped, '^')
             if length(parts) != 2
@@ -188,7 +188,7 @@ function parse_product(expr::AbstractString, sign::Int)::Vector{Tuple{String, Ra
             push!(components, (unit_name, sign * exponent))
         else
             # No exponent, default to 1
-            push!(components, (String(factor_stripped), sign * (1//1)))
+            push!(components, (String(factor_stripped), sign * (1 // 1)))
         end
     end
 
@@ -227,11 +227,11 @@ function combine_like_units(components::Vector{Tuple{String, Rational{Int}}})::V
     end
 
     # Remove units with zero exponent
-    filter!(p -> p.second != 0//1, combined)
+    filter!(p -> p.second != 0 // 1, combined)
 
     # Convert back to vector of tuples and sort for consistency
     result = [(k, v) for (k, v) in combined]
-    sort!(result, by=x->x[1])
+    sort!(result, by = x -> x[1])
 
     return result
 end
@@ -248,13 +248,13 @@ function Base.show(io::IO, expr::UnitExpression)
 
     for (unit, exp) in expr.components
         if exp > 0
-            if exp == 1//1
+            if exp == 1 // 1
                 push!(numerator, unit)
             else
                 push!(numerator, "$unit^$(exp)")
             end
         else
-            if exp == -1//1
+            if exp == -1 // 1
                 push!(denominator, unit)
             else
                 push!(denominator, "$unit^$(abs(exp))")

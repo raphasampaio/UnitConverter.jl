@@ -275,7 +275,7 @@ end
     test_convert_unit("mg", "Tg", 1e-15)
     test_convert_unit("mg", "Gg", 1e-12)
     test_convert_unit("mg", "Mg", 1e-09)
-    test_convert_unit("mg", "kg", 1e-06)    
+    test_convert_unit("mg", "kg", 1e-06)
     test_convert_unit("mg", "dag", 0.0001)
     test_convert_unit("mg", "dg", 0.01)
     test_convert_unit("mg", "cg", 0.1)
@@ -741,7 +741,7 @@ end
     # test_convert_unit("m/s", "ft/s", 3.2808399 atol = 1e-6
     # test_convert_unit("km/h", "mi/h", 0.6213727366498069 atol = 1e-6
     # test_convert_unit("mi/h", "km/h", 1.609344 atol = 1e-5
-    
+
     # test_convert_unit("m/s^2", "ft/s^2", 3.2808399 atol = 1e-6
     # test_convert_unit("ft/s^2", "m/s^2", 0.3048
     # test_convert_unit("kg/m^3", "lb/ft^3", 0.062427961 atol = 1e-8

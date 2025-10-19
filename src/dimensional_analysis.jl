@@ -10,26 +10,30 @@ function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Float64, Dict{Base
     base_dimensions = Dict{BaseUnit.T, Rational{Int}}()
 
     # Check if this is a simple unit that can have an offset
-    has_offset = length(expr.components) == 1 && expr.components[1][2] == 1//1
+    has_offset = length(expr.components) == 1 && expr.components[1][2] == 1 // 1
 
     for (unit, exponent) in expr.components
         # Get the base decomposition for this unit
         decomp = get_base_decomposition(unit)
 
         # Multiply factor raised to the exponent
-        total_factor *= decomp.factor ^ Float64(exponent)
+        total_factor *= decomp.factor^Float64(exponent)
 
         # Handle offset (only for simple units with exponent = 1)
-        if has_offset && exponent == 1//1
+        if has_offset && exponent == 1 // 1
             total_offset = decomp.offset
         elseif decomp.offset != 0.0
             # Error if trying to use affine unit in compound expression or with exponent != 1
-            if exponent != 1//1
-                error("Cannot use affine unit '$unit' with exponent $exponent. " *
-                      "Affine units (like absolute temperature scales) can only be used with exponent 1.")
+            if exponent != 1 // 1
+                error(
+                    "Cannot use affine unit '$unit' with exponent $exponent. " *
+                    "Affine units (like absolute temperature scales) can only be used with exponent 1.",
+                )
             else
-                error("Cannot use affine unit '$unit' in compound expressions. " *
-                      "Affine units (like absolute temperature scales) must be used alone.")
+                error(
+                    "Cannot use affine unit '$unit' in compound expressions. " *
+                    "Affine units (like absolute temperature scales) must be used alone.",
+                )
             end
         end
 
@@ -46,7 +50,7 @@ function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Float64, Dict{Base
     end
 
     # Remove dimensions with zero exponent
-    filter!(p -> p.second != 0//1, base_dimensions)
+    filter!(p -> p.second != 0 // 1, base_dimensions)
 
     return (total_factor, total_offset, base_dimensions)
 end
@@ -63,8 +67,8 @@ function dimensions_compatible(dim1::Dict{BaseUnit.T, Rational{Int}}, dim2::Dict
     all_units = union(keys(dim1), keys(dim2))
 
     for unit in all_units
-        exp1 = get(dim1, unit, 0//1)
-        exp2 = get(dim2, unit, 0//1)
+        exp1 = get(dim1, unit, 0 // 1)
+        exp2 = get(dim2, unit, 0 // 1)
 
         if exp1 != exp2
             return false
@@ -83,16 +87,16 @@ function format_dimensions(dimensions::Dict{BaseUnit.T, Rational{Int}})::String
     numerator = String[]
     denominator = String[]
 
-    for (unit, exp) in sort(collect(dimensions), by=x->string(x[1]))
+    for (unit, exp) in sort(collect(dimensions), by = x -> string(x[1]))
         unit_str = string(Symbol(unit))  # Convert BaseUnit enum to string
         if exp > 0
-            if exp == 1//1
+            if exp == 1 // 1
                 push!(numerator, unit_str)
             else
                 push!(numerator, "$unit_str^$(exp)")
             end
         else
-            if exp == -1//1
+            if exp == -1 // 1
                 push!(denominator, unit_str)
             else
                 push!(denominator, "$unit_str^$(abs(exp))")
