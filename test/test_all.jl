@@ -786,156 +786,155 @@ end
     # Basic multiplication tests
     @testset "Basic multiplications" begin
         # Force times distance = Energy
-        @test convert_unit("N*m", "J", 1.0) ≈ 1.0
-        @test convert_unit("kg*m^2/s^2", "J", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "N*m", "J") ≈ 1.0
+        @test convert_unit(1.0, "kg*m^2/s^2", "J") ≈ 1.0
 
         # Power times time = Energy
-        @test convert_unit("W*s", "J", 1.0) ≈ 1.0
-        @test convert_unit("kW*h", "MJ", 1.0) ≈ 3.6
-        @test convert_unit("MW*h", "GJ", 1.0) ≈ 3.6
+        @test convert_unit(1.0, "W*s", "J") ≈ 1.0
+        @test convert_unit(1.0, "kW*h", "MJ") ≈ 3.6
+        @test convert_unit(1.0, "MW*h", "GJ") ≈ 3.6
 
         # Density times volume = Mass
-        @test convert_unit("kg/m^3*m^3", "kg", 1.0) ≈ 1.0
-        @test convert_unit("g/cm^3*cm^3", "g", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "kg/m^3*m^3", "kg") ≈ 1.0
+        @test convert_unit(1.0, "g/cm^3*cm^3", "g") ≈ 1.0
 
         # Velocity times time = Distance
-        @test convert_unit("m/s*s", "m", 1.0) ≈ 1.0
-        @test convert_unit("km/h*h", "km", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "m/s*s", "m") ≈ 1.0
+        @test convert_unit(1.0, "km/h*h", "km") ≈ 1.0
 
         # Area times length = Volume
-        @test convert_unit("m^2*m", "m^3", 1.0) ≈ 1.0
-        @test convert_unit("cm^2*cm", "cm^3", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "m^2*m", "m^3") ≈ 1.0
+        @test convert_unit(1.0, "cm^2*cm", "cm^3") ≈ 1.0
     end
 
     @testset "Complex multiplications" begin
         # Pressure times area = Force
-        @test convert_unit("Pa*m^2", "N", 1.0) ≈ 1.0
-        @test convert_unit("kPa*m^2", "kN", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "Pa*m^2", "N") ≈ 1.0
+        @test convert_unit(1.0, "kPa*m^2", "N") ≈ 1000.0
 
         # Mass times acceleration = Force
-        @test convert_unit("kg*m/s^2", "N", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "kg*m/s^2", "N") ≈ 1.0
 
         # Flow rate times time = Volume
-        @test convert_unit("m^3/s*s", "m^3", 1.0) ≈ 1.0
-        @test convert_unit("L/min*min", "L", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "m^3/s*s", "m^3") ≈ 1.0
+        @test convert_unit(1.0, "L/min*min", "L") ≈ 1.0
 
         # Power per unit area times area = Power
-        @test convert_unit("W/m^2*m^2", "W", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "W/m^2*m^2", "W") ≈ 1.0
 
         # Specific energy times mass = Energy
-        @test convert_unit("J/kg*kg", "J", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "J/kg*kg", "J") ≈ 1.0
     end
 
     @testset "Basic divisions" begin
         # Energy divided by time = Power
-        @test convert_unit("J/s", "W", 1.0) ≈ 1.0
-        @test convert_unit("kJ/s", "kW", 1.0) ≈ 1.0
-        @test convert_unit("MJ/h", "kW", 1.0) ≈ 1000.0/3600.0
+        @test convert_unit(1.0, "J/s", "W") ≈ 1.0
+        @test convert_unit(1.0, "kJ/s", "kW") ≈ 1.0
+        @test convert_unit(1.0, "MJ/h", "kW") ≈ 1000.0/3600.0
 
         # Distance divided by time = Velocity
-        @test convert_unit("m/s", "m/s", 1.0) ≈ 1.0
-        @test convert_unit("km/h", "m/s", 1.0) ≈ 1000.0/3600.0
+        @test convert_unit(1.0, "m/s", "m/s") ≈ 1.0
+        @test convert_unit(1.0, "km/h", "m/s") ≈ 1000.0/3600.0
 
         # Force divided by area = Pressure
-        @test convert_unit("N/m^2", "Pa", 1.0) ≈ 1.0
-        @test convert_unit("kN/m^2", "kPa", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "N/m^2", "Pa") ≈ 1.0
 
         # Volume divided by area = Length
-        @test convert_unit("m^3/m^2", "m", 1.0) ≈ 1.0
-        @test convert_unit("L/m^2", "mm", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "m^3/m^2", "m") ≈ 1.0
+        @test convert_unit(1.0, "L/m^2", "mm") ≈ 1.0
 
         # Mass divided by volume = Density
-        @test convert_unit("kg/m^3", "kg/m^3", 1.0) ≈ 1.0
-        @test convert_unit("g/cm^3", "kg/m^3", 1.0) ≈ 1000.0
+        @test convert_unit(1.0, "kg/m^3", "kg/m^3") ≈ 1.0
+        @test convert_unit(1.0, "g/cm^3", "kg/m^3") ≈ 1000.0
     end
 
     @testset "Complex divisions" begin
         # Energy per unit mass = Specific energy
-        @test convert_unit("J/kg", "J/kg", 1.0) ≈ 1.0
-        @test convert_unit("kJ/kg", "J/g", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "J/kg", "J/kg") ≈ 1.0
+        @test convert_unit(1.0, "kJ/kg", "J/g") ≈ 1.0
 
         # Power per unit area = Irradiance
-        @test convert_unit("W/m^2", "W/m^2", 1.0) ≈ 1.0
-        @test convert_unit("kW/m^2", "W/cm^2", 1.0) ≈ 0.1
+        @test convert_unit(1.0, "W/m^2", "W/m^2") ≈ 1.0
+        @test convert_unit(1.0, "kW/m^2", "W/cm^2") ≈ 0.1
 
         # Flow rate (volume per time)
-        @test convert_unit("m^3/s", "L/s", 1.0) ≈ 1000.0
-        @test convert_unit("L/min", "m^3/h", 1.0) ≈ 0.06
+        @test convert_unit(1.0, "m^3/s", "L/s") ≈ 1000.0
+        @test convert_unit(1.0, "L/min", "m^3/h") ≈ 0.06
 
         # Angular velocity
-        @test convert_unit("rad/s", "deg/s", 1.0) ≈ 180.0/π
+        @test convert_unit(1.0, "rad/s", "deg/s") ≈ 180.0/π
 
         # Acceleration
-        @test convert_unit("m/s^2", "m/s^2", 1.0) ≈ 1.0
-        @test convert_unit("km/h^2", "m/s^2", 1.0) ≈ (1000.0/3600.0^2)
+        @test convert_unit(1.0, "m/s^2", "m/s^2") ≈ 1.0
+        @test convert_unit(1.0, "km/h^2", "m/s^2") ≈ (1000.0/3600.0^2)
     end
 
     @testset "Mixed multiplication and division" begin
         # Complex unit conversions with both operations
-        @test convert_unit("kg*m/s^2", "N", 1.0) ≈ 1.0
-        @test convert_unit("N*m/s", "W", 1.0) ≈ 1.0
-        @test convert_unit("J/m^3", "Pa", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "kg*m/s^2", "N") ≈ 1.0
+        @test convert_unit(1.0, "N*m/s", "W") ≈ 1.0
+        @test convert_unit(1.0, "J/m^3", "Pa") ≈ 1.0
 
         # Energy efficiency (dimensionless ratios)
-        @test convert_unit("J/J", "", 1.0) ≈ 1.0
-        @test convert_unit("kWh/kWh", "%", 1.0) ≈ 100.0
+        @test convert_unit(1.0, "J/J", "") ≈ 1.0
+        @test convert_unit(1.0, "kWh/kWh", "%") ≈ 100.0
 
         # Flow coefficient
-        @test convert_unit("m^3/s/Pa", "m^3/s/kPa", 1.0) ≈ 1000.0
+        @test convert_unit(1.0, "m^3/s/Pa", "m^3/s/kPa") ≈ 1000.0
 
         # Specific volume
-        @test convert_unit("m^3/kg", "L/g", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "m^3/kg", "L/g") ≈ 1.0
 
         # Momentum
-        @test convert_unit("kg*m/s", "kg*m/s", 1.0) ≈ 1.0
-        @test convert_unit("kg*km/h", "kg*m/s", 1.0) ≈ 1000.0/3600.0
+        @test convert_unit(1.0, "kg*m/s", "kg*m/s") ≈ 1.0
+        @test convert_unit(1.0, "kg*km/h", "kg*m/s") ≈ 1000.0/3600.0
     end
 
     @testset "Unit cancellation" begin
         # Units that should cancel out
-        @test convert_unit("m/m", "", 1.0) ≈ 1.0
-        @test convert_unit("kg/kg", "", 1.0) ≈ 1.0
-        @test convert_unit("s/s", "", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "m/m", "") ≈ 1.0
+        @test convert_unit(1.0, "kg/kg", "") ≈ 1.0
+        @test convert_unit(1.0, "s/s", "") ≈ 1.0
 
         # Partial cancellation
-        @test convert_unit("m^2/m", "m", 1.0) ≈ 1.0
-        @test convert_unit("kg*m/kg", "m", 1.0) ≈ 1.0
-        @test convert_unit("J*s/J", "s", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "m^2/m", "m") ≈ 1.0
+        @test convert_unit(1.0, "kg*m/kg", "m") ≈ 1.0
+        @test convert_unit(1.0, "J*s/J", "s") ≈ 1.0
     end
 
     @testset "Practical engineering units" begin
         # Hydraulic flow with pressure drop
-        @test convert_unit("L/min", "m^3/h", 1.0) ≈ 0.06
-        @test convert_unit("gal/min", "L/s", 1.0) ≈ 3.7854118/60.0
+        @test convert_unit(1.0, "L/min", "m^3/h") ≈ 0.06
+        @test convert_unit(1.0, "gal/min", "L/s") ≈ 3.7854118/60.0
 
         # Thermal power
-        @test convert_unit("kJ/s", "kW", 1.0) ≈ 1.0
-        @test convert_unit("MJ/h", "kW", 1.0) ≈ 1000.0/3600.0
+        @test convert_unit(1.0, "kJ/s", "kW") ≈ 1.0
+        @test convert_unit(1.0, "MJ/h", "kW") ≈ 1000.0/3600.0
 
         # Electrical units
-        @test convert_unit("W*h", "J", 1.0) ≈ 3600.0
-        @test convert_unit("kW*h", "MJ", 1.0) ≈ 3.6
-        @test convert_unit("MW*h", "GJ", 1.0) ≈ 3.6
+        @test convert_unit(1.0, "W*h", "J") ≈ 3600.0
+        @test convert_unit(1.0, "kW*h", "MJ") ≈ 3.6
+        @test convert_unit(1.0, "MW*h", "GJ") ≈ 3.6
 
         # Fuel consumption
-        @test convert_unit("L/km", "L/km", 1.0) ≈ 1.0
-        @test convert_unit("gal/mi", "L/km", 1.0) ≈ 3.7854118/1.60934
+        @test convert_unit(1.0, "L/km", "L/km") ≈ 1.0
+        @test convert_unit(1.0, "gal/mi", "L/km") ≈ 3.7854118/1.60934
 
         # Specific fuel consumption
-        @test convert_unit("g/kW/h", "kg/MW/h", 1.0) ≈ 1.0
+        @test convert_unit(1.0, "g/kW/h", "kg/MW/h") ≈ 1.0
     end
 
     @testset "Dimensional consistency checks" begin
         # These should work (compatible dimensions)
-        @test convert_unit("N*m", "J", 1.0) isa Float64
-        @test convert_unit("Pa*m^3", "J", 1.0) isa Float64
-        @test convert_unit("W*s", "J", 1.0) isa Float64
+        @test convert_unit(1.0, "N*m", "J") isa Float64
+        @test convert_unit(1.0, "Pa*m^3", "J") isa Float64
+        @test convert_unit(1.0, "W*s", "J") isa Float64
 
         # These should error (incompatible dimensions)
-        @test_throws ErrorException convert_unit("m", "kg", 1.0)
-        @test_throws ErrorException convert_unit("J", "m", 1.0)
-        @test_throws ErrorException convert_unit("Pa", "kg", 1.0)
-        @test_throws ErrorException convert_unit("m*s", "kg", 1.0)
+        @test_throws ErrorException convert_unit(1.0, "m", "kg")
+        @test_throws ErrorException convert_unit(1.0, "J", "m")
+        @test_throws ErrorException convert_unit(1.0, "Pa", "kg")
+        @test_throws ErrorException convert_unit(1.0, "m*s", "kg")
     end
 end
 

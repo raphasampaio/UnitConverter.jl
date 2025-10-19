@@ -111,29 +111,8 @@ function parse_unit(unit_str::String)::UnitExpression
         return UnitExpression()
     end
 
-    # Split by division first (but not inside parentheses)
-    parts = smart_split(unit_str, '/')
-
-    numerator_components = Tuple{String, Rational{Int}}[]
-    denominator_components = Tuple{String, Rational{Int}}[]
-
-    # Parse numerator (everything before first /)
-    if length(parts) >= 1 && !isempty(parts[1])
-        numerator_components = parse_product(parts[1], 1)
-    end
-
-    # Parse denominator (each part after / is in denominator)
-    # e.g., "kg/m/s^2" = kg * m^-1 * s^-2
-    if length(parts) >= 2
-        for i in 2:length(parts)
-            if !isempty(parts[i])
-                append!(denominator_components, parse_product(parts[i], -1))
-            end
-        end
-    end
-
-    # Combine numerator and denominator
-    all_components = vcat(numerator_components, denominator_components)
+    # Parse the expression as a sequence of * and / operations (left-to-right)
+    all_components = parse_mul_div_sequence(unit_str)
 
     # Combine like units
     combined = combine_like_units(all_components)
@@ -141,59 +120,116 @@ function parse_unit(unit_str::String)::UnitExpression
     return UnitExpression(combined)
 end
 
-# Parse a product expression like "kg*m^2"
-function parse_product(expr::AbstractString, sign::Int)::Vector{Tuple{String, Rational{Int}}}
+# Parse a sequence of multiplication and division operations (left-to-right)
+# This handles operator precedence correctly: * and / have equal precedence
+function parse_mul_div_sequence(expr::AbstractString)::Vector{Tuple{String, Rational{Int}}}
     if isempty(expr)
         return Tuple{String, Rational{Int}}[]
     end
 
     components = Tuple{String, Rational{Int}}[]
 
-    # Split by multiplication (but not inside parentheses)
-    factors = smart_split(expr, '*')
+    # Split by both * and / (but not inside parentheses)
+    # We need to track which operator was used
+    tokens = String[]
+    operators = Char[]
 
-    for factor in factors
-        if isempty(factor)
+    depth = 0
+    start_idx = 1
+
+    for (i, c) in enumerate(expr)
+        if c == '('
+            depth += 1
+        elseif c == ')'
+            depth -= 1
+        elseif (c == '*' || c == '/') && depth == 0
+            push!(tokens, String(expr[start_idx:i-1]))
+            push!(operators, c)
+            start_idx = i + 1
+        end
+    end
+
+    # Add the last token
+    if start_idx <= length(expr)
+        push!(tokens, String(expr[start_idx:end]))
+    end
+
+    # Process tokens left-to-right with their operators
+    # We track the "current context": are we multiplying or dividing?
+    # * means multiply the next term
+    # / means divide by the next term (invert it)
+    current_sign = 1  # Start with positive (numerator)
+
+    for (i, token) in enumerate(tokens)
+        if isempty(token)
             continue
         end
 
-        # Strip parentheses from the factor
-        factor_stripped = strip_outer_parentheses(String(factor))
+        # Parse this token as a single unit with exponent
+        unit_components = parse_single_unit(token, current_sign)
+        append!(components, unit_components)
 
-        if isempty(factor_stripped)
-            continue
-        end
-
-        # Check if this was a parenthesized expression (had outer parens that we removed)
-        # If so, it might be a compound expression like (m^3/s) that needs recursive parsing
-        if factor != factor_stripped && (occursin('/', factor_stripped) || occursin('*', factor_stripped))
-            # Recursively parse the parenthesized expression
-            sub_expr = parse_unit(factor_stripped)
-            for (unit, exp) in sub_expr.components
-                push!(components, (unit, sign * exp))
+        # Determine the sign for the NEXT token based on the operator that follows current token
+        if i <= length(operators)
+            if operators[i] == '*'
+                # Multiplication: next term goes to numerator (positive)
+                # a/b*c = (a/b)*c = (a*c)/b, so c is in numerator
+                current_sign = 1
+            elseif operators[i] == '/'
+                # Division: next term goes to denominator (negative)
+                # a*b/c = a*b*(1/c), so c is in denominator
+                # a/b/c = (a/b)/c = a/(b*c), so both b and c are in denominator
+                current_sign = -1
             end
-            # Check for exponent
-        elseif occursin('^', factor_stripped)
-            parts = smart_split(factor_stripped, '^')
-            if length(parts) != 2
-                error("Invalid exponent syntax in: $factor_stripped")
-            end
-
-            unit_name = strip_outer_parentheses(String(parts[1]))
-            exponent_str = String(parts[2])
-
-            # Parse exponent (can be integer or rational like "1/2")
-            exponent = parse_exponent(exponent_str)
-
-            push!(components, (unit_name, sign * exponent))
-        else
-            # No exponent, default to 1
-            push!(components, (String(factor_stripped), sign * (1 // 1)))
         end
     end
 
     return components
 end
+
+# Parse a single unit (possibly with exponent) like "m^2" or "(m^3/s)"
+function parse_single_unit(token::AbstractString, sign::Int)::Vector{Tuple{String, Rational{Int}}}
+    if isempty(token)
+        return Tuple{String, Rational{Int}}[]
+    end
+
+    token_stripped = strip_outer_parentheses(String(token))
+
+    # Check if this is a compound expression (had outer parens and contains * or /)
+    if token != token_stripped && (occursin('/', token_stripped) || occursin('*', token_stripped))
+        # Recursively parse the parenthesized expression
+        sub_expr = parse_unit(token_stripped)
+        return [(unit, sign * exp) for (unit, exp) in sub_expr.components]
+    end
+
+    # Check for exponent
+    if occursin('^', token_stripped)
+        parts = smart_split(token_stripped, '^')
+        if length(parts) != 2
+            error("Invalid exponent syntax in: $token_stripped")
+        end
+
+        unit_name = strip_outer_parentheses(String(parts[1]))
+        exponent_str = String(parts[2])
+
+        # Check if unit_name is a compound expression
+        if occursin('/', unit_name) || occursin('*', unit_name)
+            # Parse as compound, then apply exponent
+            sub_expr = parse_unit(unit_name)
+            exponent = parse_exponent(exponent_str)
+            return [(unit, sign * exp * exponent) for (unit, exp) in sub_expr.components]
+        end
+
+        # Parse exponent (can be integer or rational like "1/2")
+        exponent = parse_exponent(exponent_str)
+
+        return [(unit_name, sign * exponent)]
+    else
+        # No exponent, default to 1
+        return [(String(token_stripped), sign * (1 // 1))]
+    end
+end
+
 
 # Parse an exponent string (can be "2" or "-2" or "1/2")
 function parse_exponent(exp_str::AbstractString)::Rational{Int}
