@@ -4,10 +4,10 @@
 # Reduce a parsed UnitExpression to base SI units
 # Returns (factor, offset, base_dimensions)
 # Note: offset is only meaningful for simple units (single component with exponent 1)
-function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Float64, Dict{String, Rational{Int}}}
+function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Float64, Dict{BaseUnit.T, Rational{Int}}}
     total_factor = 1.0
     total_offset = 0.0
-    base_dimensions = Dict{String, Rational{Int}}()
+    base_dimensions = Dict{BaseUnit.T, Rational{Int}}()
 
     # Check if this is a simple unit that can have an offset
     has_offset = length(expr.components) == 1 && expr.components[1][2] == 1//1
@@ -52,13 +52,13 @@ function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Float64, Dict{Stri
 end
 
 # Reduce a unit string to base units
-function reduce_unit_string(unit_str::String)::Tuple{Float64, Float64, Dict{String, Rational{Int}}}
+function reduce_unit_string(unit_str::String)::Tuple{Float64, Float64, Dict{BaseUnit.T, Rational{Int}}}
     expr = parse_unit(unit_str)
     return reduce_to_base(expr)
 end
 
 # Check if two dimension dictionaries are compatible (same dimensions)
-function dimensions_compatible(dim1::Dict{String, Rational{Int}}, dim2::Dict{String, Rational{Int}})::Bool
+function dimensions_compatible(dim1::Dict{BaseUnit.T, Rational{Int}}, dim2::Dict{BaseUnit.T, Rational{Int}})::Bool
     # Get all unique base units
     all_units = union(keys(dim1), keys(dim2))
 
@@ -75,7 +75,7 @@ function dimensions_compatible(dim1::Dict{String, Rational{Int}}, dim2::Dict{Str
 end
 
 # Format dimensions as a string (for error messages)
-function format_dimensions(dimensions::Dict{String, Rational{Int}})::String
+function format_dimensions(dimensions::Dict{BaseUnit.T, Rational{Int}})::String
     if isempty(dimensions)
         return "dimensionless"
     end
@@ -83,18 +83,19 @@ function format_dimensions(dimensions::Dict{String, Rational{Int}})::String
     numerator = String[]
     denominator = String[]
 
-    for (unit, exp) in sort(collect(dimensions), by=x->x[1])
+    for (unit, exp) in sort(collect(dimensions), by=x->string(x[1]))
+        unit_str = string(Symbol(unit))  # Convert BaseUnit enum to string
         if exp > 0
             if exp == 1//1
-                push!(numerator, unit)
+                push!(numerator, unit_str)
             else
-                push!(numerator, "$unit^$(exp)")
+                push!(numerator, "$unit_str^$(exp)")
             end
         else
             if exp == -1//1
-                push!(denominator, unit)
+                push!(denominator, unit_str)
             else
-                push!(denominator, "$unit^$(abs(exp))")
+                push!(denominator, "$unit_str^$(abs(exp))")
             end
         end
     end

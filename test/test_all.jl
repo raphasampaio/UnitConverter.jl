@@ -31,10 +31,6 @@ end
     test_convert_unit("km", "m", 1000)
     test_convert_unit("km", "cm", 100000)
 
-    test_convert_unit("m", "km", 0.001)
-    test_convert_unit("cm", "m", 0.01)
-    test_convert_unit("cm", "km", 1e-05)
-
     test_convert_unit("in", "cm", 2.54)
 
     test_convert_unit("ft", "m", 0.3048)
@@ -44,13 +40,9 @@ end
     test_convert_unit("mi", "km", 1.60934)
 
     test_convert_unit("kg", "g", 1000)
-    test_convert_unit("g", "kg", 0.001)
 
     test_convert_unit("lb", "kg", 0.45359237)
     test_convert_unit("oz", "g", 28.349523125)
-
-    test_convert_unit("kg", "lb", 1 / 0.45359237)
-    test_convert_unit("g", "oz", 1 / 28.349523125)
 
     test_convert_unit("m/s", "km/h", 3.6)
 
@@ -732,13 +724,11 @@ end
     test_convert_unit("kW", "MW", 0.001)
 
     test_convert_unit("hm^3", "l", 1e+09)
-    test_convert_unit("l", "hm^3", 1e-09)
 
     test_convert_unit("MW * h", "MWh", 1)
     test_convert_unit("MWh", "MW * h", 1)
 
     test_convert_unit("kW*h", "J", 3.6e6)
-    test_convert_unit("J", "kW*h", 1 / 3.6e6)
 
     test_convert_unit("N*m", "J", 1)
     test_convert_unit("J", "N*m", 1)

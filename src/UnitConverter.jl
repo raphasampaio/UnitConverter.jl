@@ -1,5 +1,7 @@
 module UnitConverter
 
+using EnumX
+
 # Export main conversion functions
 export convert_unit
 
