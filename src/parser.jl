@@ -206,7 +206,12 @@ function parse_single_unit(token::AbstractString, sign::Int)::Vector{Tuple{Strin
     if occursin('^', token_stripped)
         parts = smart_split(token_stripped, '^')
         if length(parts) != 2
-            error("Invalid exponent syntax in: $token_stripped")
+            throw(
+                InvalidUnitSyntaxError(
+                    String(token_stripped),
+                    "Exponent must have exactly one '^' character with unit and exponent on either side",
+                ),
+            )
         end
 
         unit_name = strip_outer_parentheses(String(parts[1]))
@@ -230,23 +235,59 @@ function parse_single_unit(token::AbstractString, sign::Int)::Vector{Tuple{Strin
     end
 end
 
-
 # Parse an exponent string (can be "2" or "-2" or "1/2")
 function parse_exponent(exp_str::AbstractString)::Rational{Int}
     exp_str = strip(exp_str)
+
+    # Check for empty exponent
+    if isempty(exp_str)
+        throw(InvalidUnitSyntaxError(
+            String(exp_str),
+            "Exponent cannot be empty",
+        ))
+    end
 
     # Check if it's a fraction
     if occursin('/', exp_str)
         parts = split(exp_str, '/')
         if length(parts) != 2
-            error("Invalid fraction exponent: $exp_str")
+            throw(
+                InvalidUnitSyntaxError(
+                    String(exp_str),
+                    "Fraction exponent must have exactly one '/' with numerator and denominator",
+                ),
+            )
         end
-        numerator = parse(Int, strip(String(parts[1])))
-        denominator = parse(Int, strip(String(parts[2])))
-        return numerator // denominator
+
+        # Try to parse numerator and denominator, catching parse errors
+        try
+            numerator = parse(Int, strip(String(parts[1])))
+            denominator = parse(Int, strip(String(parts[2])))
+            return numerator // denominator
+        catch e
+            if e isa ArgumentError
+                throw(InvalidUnitSyntaxError(
+                    String(exp_str),
+                    "Fraction exponent parts must be valid integers",
+                ))
+            else
+                rethrow(e)
+            end
+        end
     else
         # Simple integer exponent
-        return parse(Int, exp_str) // 1
+        try
+            return parse(Int, exp_str) // 1
+        catch e
+            if e isa ArgumentError
+                throw(InvalidUnitSyntaxError(
+                    String(exp_str),
+                    "Exponent must be a valid integer",
+                ))
+            else
+                rethrow(e)
+            end
+        end
     end
 end
 

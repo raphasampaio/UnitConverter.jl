@@ -9,11 +9,12 @@ function convert_unit(value::Real, from_unit::String, to_unit::String)::Float64
 
     # Check dimensional compatibility
     if !dimensions_compatible(from_dims, to_dims)
-        error(
-            "Cannot convert between incompatible units: " *
-            "'$from_unit' [$(format_dimensions(from_dims))] and " *
-            "'$to_unit' [$(format_dimensions(to_dims))]",
-        )
+        throw(DimensionalMismatchError(
+            from_unit,
+            to_unit,
+            format_dimensions(from_dims),
+            format_dimensions(to_dims),
+        ))
     end
 
     # Affine transformation:

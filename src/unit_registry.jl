@@ -292,7 +292,7 @@ is_registered_unit(unit::String) = haskey(UNIT_REGISTRY, unit)
 # Get the base unit decomposition for a unit
 function get_base_decomposition(unit::String)::BaseUnitDecomposition
     if !haskey(UNIT_REGISTRY, unit)
-        error("Unknown unit: $unit")
+        throw(UnknownUnitError(unit))
     end
     return UNIT_REGISTRY[unit]
 end

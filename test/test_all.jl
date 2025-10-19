@@ -830,11 +830,11 @@ end
         # Energy divided by time = Power
         @test convert_unit(1.0, "J/s", "W") ≈ 1.0
         @test convert_unit(1.0, "kJ/s", "kW") ≈ 1.0
-        @test convert_unit(1.0, "MJ/h", "kW") ≈ 1000.0/3600.0
+        @test convert_unit(1.0, "MJ/h", "kW") ≈ 1000.0 / 3600.0
 
         # Distance divided by time = Velocity
         @test convert_unit(1.0, "m/s", "m/s") ≈ 1.0
-        @test convert_unit(1.0, "km/h", "m/s") ≈ 1000.0/3600.0
+        @test convert_unit(1.0, "km/h", "m/s") ≈ 1000.0 / 3600.0
 
         # Force divided by area = Pressure
         @test convert_unit(1.0, "N/m^2", "Pa") ≈ 1.0
@@ -862,11 +862,11 @@ end
         @test convert_unit(1.0, "L/min", "m^3/h") ≈ 0.06
 
         # Angular velocity
-        @test convert_unit(1.0, "rad/s", "deg/s") ≈ 180.0/π
+        @test convert_unit(1.0, "rad/s", "deg/s") ≈ 180.0 / π
 
         # Acceleration
         @test convert_unit(1.0, "m/s^2", "m/s^2") ≈ 1.0
-        @test convert_unit(1.0, "km/h^2", "m/s^2") ≈ (1000.0/3600.0^2)
+        @test convert_unit(1.0, "km/h^2", "m/s^2") ≈ (1000.0 / 3600.0^2)
     end
 
     @testset "Mixed multiplication and division" begin
@@ -887,7 +887,7 @@ end
 
         # Momentum
         @test convert_unit(1.0, "kg*m/s", "kg*m/s") ≈ 1.0
-        @test convert_unit(1.0, "kg*km/h", "kg*m/s") ≈ 1000.0/3600.0
+        @test convert_unit(1.0, "kg*km/h", "kg*m/s") ≈ 1000.0 / 3600.0
     end
 
     @testset "Unit cancellation" begin
@@ -905,11 +905,11 @@ end
     @testset "Practical engineering units" begin
         # Hydraulic flow with pressure drop
         @test convert_unit(1.0, "L/min", "m^3/h") ≈ 0.06
-        @test convert_unit(1.0, "gal/min", "L/s") ≈ 3.7854118/60.0
+        @test convert_unit(1.0, "gal/min", "L/s") ≈ 3.7854118 / 60.0
 
         # Thermal power
         @test convert_unit(1.0, "kJ/s", "kW") ≈ 1.0
-        @test convert_unit(1.0, "MJ/h", "kW") ≈ 1000.0/3600.0
+        @test convert_unit(1.0, "MJ/h", "kW") ≈ 1000.0 / 3600.0
 
         # Electrical units
         @test convert_unit(1.0, "W*h", "J") ≈ 3600.0
@@ -918,7 +918,7 @@ end
 
         # Fuel consumption
         @test convert_unit(1.0, "L/km", "L/km") ≈ 1.0
-        @test convert_unit(1.0, "gal/mi", "L/km") ≈ 3.7854118/1.60934
+        @test convert_unit(1.0, "gal/mi", "L/km") ≈ 3.7854118 / 1.60934
 
         # Specific fuel consumption
         @test convert_unit(1.0, "g/kW/h", "kg/MW/h") ≈ 1.0
@@ -931,10 +931,148 @@ end
         @test convert_unit(1.0, "W*s", "J") isa Float64
 
         # These should error (incompatible dimensions)
-        @test_throws ErrorException convert_unit(1.0, "m", "kg")
-        @test_throws ErrorException convert_unit(1.0, "J", "m")
-        @test_throws ErrorException convert_unit(1.0, "Pa", "kg")
-        @test_throws ErrorException convert_unit(1.0, "m*s", "kg")
+        @test_throws DimensionalMismatchError convert_unit(1.0, "m", "kg")
+        @test_throws DimensionalMismatchError convert_unit(1.0, "J", "m")
+        @test_throws DimensionalMismatchError convert_unit(1.0, "Pa", "kg")
+        @test_throws DimensionalMismatchError convert_unit(1.0, "m*s", "kg")
+    end
+end
+
+@testset "Custom Exception Types" begin
+    @testset "DimensionalMismatchError" begin
+        # Test that the exception is thrown
+        @test_throws DimensionalMismatchError convert_unit(1.0, "m", "kg")
+
+        # Test exception fields contain correct data
+        try
+            convert_unit(1.0, "m", "kg")
+            @test false  # Should not reach here
+        catch e
+            @test e isa DimensionalMismatchError
+            @test e.from_unit == "m"
+            @test e.to_unit == "kg"
+            @test e.from_dimensions == "m"
+            @test e.to_dimensions == "kg"
+        end
+
+        # Test another dimensional mismatch
+        try
+            convert_unit(1.0, "J", "m^2")
+            @test false
+        catch e
+            @test e isa DimensionalMismatchError
+            @test e.from_unit == "J"
+            @test e.to_unit == "m^2"
+            @test occursin("kg", e.from_dimensions)
+            @test occursin("m^2", e.to_dimensions)
+        end
+
+        # Test error message formatting
+        try
+            convert_unit(1.0, "Pa", "kg")
+            @test false
+        catch e
+            msg = sprint(showerror, e)
+            @test occursin("DimensionalMismatchError", msg)
+            @test occursin("Cannot convert between incompatible units", msg)
+            @test occursin("Pa", msg)
+            @test occursin("kg", msg)
+        end
+    end
+
+    @testset "UnknownUnitError" begin
+        # Test that the exception is thrown for unknown units
+        @test_throws UnknownUnitError convert_unit(1.0, "xyz", "m")
+        @test_throws UnknownUnitError convert_unit(1.0, "m", "abc")
+
+        # Test exception fields
+        try
+            convert_unit(1.0, "foobar", "m")
+            @test false
+        catch e
+            @test e isa UnknownUnitError
+            @test e.unit == "foobar"
+        end
+
+        # Test error message formatting
+        try
+            convert_unit(1.0, "unknownunit", "m")
+            @test false
+        catch e
+            msg = sprint(showerror, e)
+            @test occursin("UnknownUnitError", msg)
+            @test occursin("Unknown unit", msg)
+            @test occursin("unknownunit", msg)
+        end
+
+        # Test with compound expressions containing unknown units
+        @test_throws UnknownUnitError convert_unit(1.0, "m*unknown", "m^2")
+    end
+
+    @testset "InvalidUnitSyntaxError" begin
+        # Test invalid exponent syntax
+        @test_throws InvalidUnitSyntaxError convert_unit(1.0, "m^^2", "m")
+        @test_throws InvalidUnitSyntaxError convert_unit(1.0, "m^", "m")
+
+        # Test exception fields for invalid exponent
+        try
+            convert_unit(1.0, "m^^3", "m")
+            @test false
+        catch e
+            @test e isa InvalidUnitSyntaxError
+            @test occursin("m^^3", e.unit_string)
+            @test occursin("Exponent", e.reason)
+        end
+
+        # Test error message formatting
+        try
+            convert_unit(1.0, "kg^2^3", "kg")
+            @test false
+        catch e
+            msg = sprint(showerror, e)
+            @test occursin("InvalidUnitSyntaxError", msg)
+            @test occursin("Invalid unit syntax", msg)
+        end
+    end
+
+    @testset "Exception Hierarchy" begin
+        # Verify all custom exceptions are subtypes of Exception
+        @test DimensionalMismatchError <: Exception
+        @test UnknownUnitError <: Exception
+        @test InvalidUnitSyntaxError <: Exception
+    end
+
+    @testset "Programmatic Error Handling" begin
+        # Test that specific exception types can be caught
+        caught_dimensional = false
+        try
+            convert_unit(1.0, "m", "kg")
+        catch e
+            if e isa DimensionalMismatchError
+                caught_dimensional = true
+            end
+        end
+        @test caught_dimensional
+
+        caught_unknown = false
+        try
+            convert_unit(1.0, "notaunit", "m")
+        catch e
+            if e isa UnknownUnitError
+                caught_unknown = true
+            end
+        end
+        @test caught_unknown
+
+        caught_syntax = false
+        try
+            convert_unit(1.0, "m^^^2", "m")
+        catch e
+            if e isa InvalidUnitSyntaxError
+                caught_syntax = true
+            end
+        end
+        @test caught_syntax
     end
 end
 
