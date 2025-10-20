@@ -195,6 +195,19 @@ function parse_single_unit(token::AbstractString, sign::Int)::Vector{Tuple{Strin
 
     token_stripped = strip_outer_parentheses(String(token))
 
+    # Check if token is a numeric literal (like "1", "2.5", etc.)
+    # Numeric literals are treated as dimensionless
+    if !isempty(token_stripped) && all(c -> isdigit(c) || c in ('.', '-', '+', 'e', 'E'), token_stripped)
+        # Try to parse as a number
+        try
+            parse(Float64, token_stripped)
+            # It's a valid number, treat as dimensionless (no units)
+            return Tuple{String, Rational{Int}}[]
+        catch
+            # Not a valid number, continue parsing as unit
+        end
+    end
+
     # Check if this is a compound expression (had outer parens and contains * or /)
     if token != token_stripped && (occursin('/', token_stripped) || occursin('*', token_stripped))
         # Recursively parse the parenthesized expression
@@ -303,8 +316,8 @@ function combine_like_units(components::Vector{Tuple{String, Rational{Int}}})::V
         end
     end
 
-    # Remove units with zero exponent
-    filter!(p -> p.second != 0 // 1, combined)
+    # Remove units with zero exponent or empty unit names (dimensionless)
+    filter!(p -> p.second != 0 // 1 && !isempty(p.first), combined)
 
     # Convert back to vector of tuples and sort for consistency
     result = [(k, v) for (k, v) in combined]
