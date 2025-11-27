@@ -1,8 +1,8 @@
-function convert_unit(from_unit::String, to_unit::String)::Float64
+function convert_unit(from_unit::AbstractString, to_unit::AbstractString)::Float64
     return convert_unit(1.0, from_unit, to_unit)
 end
 
-function convert_unit(value::Real, from_unit::String, to_unit::String)::Float64
+function convert_unit(value::Real, from_unit::AbstractString, to_unit::AbstractString)::Float64
     # Parse and reduce both units to base SI units
     from_factor, from_offset, from_dims = reduce_unit_string(from_unit)
     to_factor, to_offset, to_dims = reduce_unit_string(to_unit)

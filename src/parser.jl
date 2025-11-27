@@ -38,7 +38,7 @@ function smart_split(s::AbstractString, delim::Char)::Vector{String}
 end
 
 # Helper to expand implicit exponents (e.g., "m3" -> "m^3", "hm3" -> "hm^3")
-function expand_implicit_exponents(s::String)::String
+function expand_implicit_exponents(s::AbstractString)::String
     result = IOBuffer()
     chars = collect(s)  # Convert to array of characters (handles Unicode properly)
     i = 1
@@ -70,7 +70,7 @@ function expand_implicit_exponents(s::String)::String
 end
 
 # Helper to strip outer parentheses from a string
-function strip_outer_parentheses(s::String)::String
+function strip_outer_parentheses(s::AbstractString)::String
     while !isempty(s) && s[1] == '(' && s[end] == ')'
         # Check if these are matching outer parentheses
         depth = 0
@@ -96,7 +96,7 @@ function strip_outer_parentheses(s::String)::String
 end
 
 # Parse a unit string into a UnitExpression
-function parse_unit(unit_str::String)::UnitExpression
+function parse_unit(unit_str::AbstractString)::UnitExpression
     # Remove whitespace
     unit_str = replace(unit_str, " " => "")
 

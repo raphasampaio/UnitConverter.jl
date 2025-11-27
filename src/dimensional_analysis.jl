@@ -56,7 +56,7 @@ function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Float64, Dict{Base
 end
 
 # Reduce a unit string to base units
-function reduce_unit_string(unit_str::String)::Tuple{Float64, Float64, Dict{BaseUnit.T, Rational{Int}}}
+function reduce_unit_string(unit_str::AbstractString)::Tuple{Float64, Float64, Dict{BaseUnit.T, Rational{Int}}}
     expr = parse_unit(unit_str)
     return reduce_to_base(expr)
 end

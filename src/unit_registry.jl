@@ -52,7 +52,7 @@ const SI_PREFIXES = Dict{String, Float64}(
 )
 
 # Helper function to generate SI-prefixed units
-function generate_si_prefixed_units(base_unit::String, base_factor::Float64, base_dimension::BaseUnit.T)
+function generate_si_prefixed_units(base_unit::AbstractString, base_factor::Float64, base_dimension::BaseUnit.T)
     units = Dict{String, BaseUnitDecomposition}()
     for (prefix, scale) in SI_PREFIXES
         prefixed_name = prefix * base_unit
@@ -62,7 +62,7 @@ function generate_si_prefixed_units(base_unit::String, base_factor::Float64, bas
 end
 
 # Helper function to generate SI-prefixed derived units
-function generate_si_prefixed_derived_units(base_unit::String, base_dimensions::Dict{BaseUnit.T, Rational{Int}})
+function generate_si_prefixed_derived_units(base_unit::AbstractString, base_dimensions::Dict{BaseUnit.T, Rational{Int}})
     units = Dict{String, BaseUnitDecomposition}()
     for (prefix, scale) in SI_PREFIXES
         prefixed_name = prefix * base_unit
@@ -287,10 +287,10 @@ end
 const UNIT_REGISTRY = build_unit_registry()
 
 # Check if a unit is registered
-is_registered_unit(unit::String) = haskey(UNIT_REGISTRY, unit)
+is_registered_unit(unit::AbstractString) = haskey(UNIT_REGISTRY, unit)
 
 # Get the base unit decomposition for a unit
-function get_base_decomposition(unit::String)::BaseUnitDecomposition
+function get_base_decomposition(unit::AbstractString)::BaseUnitDecomposition
     if !haskey(UNIT_REGISTRY, unit)
         throw(UnknownUnitError(unit))
     end
