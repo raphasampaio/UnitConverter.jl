@@ -12,6 +12,8 @@ function test_convert_unit(from_unit::String, to_unit::String, factor::Number)
 end
 
 @testset "All" begin
+    test_convert_unit("k\$", "\$", 1000.0)
+    test_convert_unit("m3/s", "hm3/hour", 3600 / 1e6)
     test_convert_unit("hm3", "MWh * ((m3/s)/ MW) * ((hm3/h)/(m3/s))", 1.0)
     test_convert_unit("1/GWh", "1/MWh", 0.001)
     test_convert_unit("mi/h", "m/s", 0.4470388888888889)
