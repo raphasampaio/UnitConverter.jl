@@ -8,7 +8,6 @@ export convert_unit
 # Export custom exception types
 export DimensionalMismatchError, UnknownUnitError, InvalidUnitSyntaxError
 
-include("util.jl")
 include("errors.jl")
 include("unit_registry.jl")
 include("parser.jl")
