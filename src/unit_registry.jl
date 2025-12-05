@@ -80,9 +80,37 @@ function build_unit_registry()
     registry["kg"] = BaseUnitDecomposition(1.0, BaseUnit.kg, 1 // 1)
     registry["s"] = BaseUnitDecomposition(1.0, BaseUnit.s, 1 // 1)
     registry["A"] = BaseUnitDecomposition(1.0, BaseUnit.A, 1 // 1)
+    merge!(registry, generate_si_prefixed_units("A", 1.0, BaseUnit.A))
     registry["K"] = BaseUnitDecomposition(1.0, BaseUnit.K, 1 // 1)
     registry["mol"] = BaseUnitDecomposition(1.0, BaseUnit.mol, 1 // 1)
     registry["cd"] = BaseUnitDecomposition(1.0, BaseUnit.cd, 1 // 1)
+    registry["candela"] = BaseUnitDecomposition(1.0, BaseUnit.cd, 1 // 1)
+
+    # ========== Solid Angle ==========
+    # Steradian (dimensionless in SI)
+    registry["steradian"] = BaseUnitDecomposition(1.0)
+    registry["sr"] = BaseUnitDecomposition(1.0)
+
+    # ========== Luminous Units ==========
+    # Lumen (luminous flux: cd⋅sr)
+    lumen_dims = Dict(BaseUnit.cd => 1 // 1)
+    registry["lumen"] = BaseUnitDecomposition(1.0, lumen_dims)
+    registry["lm"] = BaseUnitDecomposition(1.0, lumen_dims)
+
+    # Lux (illuminance: lm/m²)
+    lux_dims = Dict(BaseUnit.cd => 1 // 1, BaseUnit.m => -2 // 1)
+    registry["lux"] = BaseUnitDecomposition(1.0, lux_dims)
+    registry["lx"] = BaseUnitDecomposition(1.0, lux_dims)
+
+    # Footcandle (illuminance: lm/ft²)
+    registry["footcandle"] = BaseUnitDecomposition(10.76391, lux_dims)  # 1 lm/ft² = 10.76391 lux
+
+    # Phot (illuminance: lm/cm² = 10000 lux)
+    registry["phot"] = BaseUnitDecomposition(10000.0, lux_dims)
+
+    # Nit (luminance: cd/m²)
+    nit_dims = Dict(BaseUnit.cd => 1 // 1, BaseUnit.m => -2 // 1)
+    registry["nit"] = BaseUnitDecomposition(1.0, nit_dims)
 
     # ========== Length Units ==========
     # Base meter and common names
@@ -107,6 +135,22 @@ function build_unit_registry()
     registry["mi"] = BaseUnitDecomposition(1609.34, BaseUnit.m, 1 // 1)
     registry["mile"] = BaseUnitDecomposition(1609.34, BaseUnit.m, 1 // 1)
 
+    # Nautical and other length units
+    registry["nauticalmile"] = BaseUnitDecomposition(1852.0, BaseUnit.m, 1 // 1)  # exactly 1852 m
+    registry["nmi"] = BaseUnitDecomposition(1852.0, BaseUnit.m, 1 // 1)
+    registry["fathom"] = BaseUnitDecomposition(1.8288, BaseUnit.m, 1 // 1)  # 6 feet
+    registry["furlong"] = BaseUnitDecomposition(201.168, BaseUnit.m, 1 // 1)  # 1/8 mile
+    registry["chain"] = BaseUnitDecomposition(20.1168, BaseUnit.m, 1 // 1)  # 66 feet
+    registry["angstrom"] = BaseUnitDecomposition(1.0e-10, BaseUnit.m, 1 // 1)  # 0.1 nm
+
+    # Astronomical length units
+    registry["lightyear"] = BaseUnitDecomposition(9.4607305e15, BaseUnit.m, 1 // 1)
+    registry["parsec"] = BaseUnitDecomposition(3.0856776e16, BaseUnit.m, 1 // 1)  # 3.2615638 lightyears
+
+    # Typography units
+    registry["point"] = BaseUnitDecomposition(0.0254 / 72.0, BaseUnit.m, 1 // 1)  # 1/72 inch = ~0.3528 mm
+    registry["pica"] = BaseUnitDecomposition(0.0254 / 72.0 * 11.955168, BaseUnit.m, 1 // 1)  # traditional pica = 11.955168 points
+
     # ========== Mass Units ==========
     # Base kilogram
     registry["kilogram"] = BaseUnitDecomposition(1.0, BaseUnit.kg, 1 // 1)
@@ -124,6 +168,14 @@ function build_unit_registry()
     registry["oz"] = BaseUnitDecomposition(0.028349523125, BaseUnit.kg, 1 // 1)
     registry["ounce"] = BaseUnitDecomposition(0.028349523125, BaseUnit.kg, 1 // 1)
     registry["ton"] = BaseUnitDecomposition(907.18474, BaseUnit.kg, 1 // 1)  # US short ton (2000 lb)
+    registry["shortton"] = BaseUnitDecomposition(907.18474, BaseUnit.kg, 1 // 1)  # same as ton
+    registry["longton"] = BaseUnitDecomposition(1016.0469, BaseUnit.kg, 1 // 1)  # Imperial ton (2240 lb)
+    registry["tonne"] = BaseUnitDecomposition(1000.0, BaseUnit.kg, 1 // 1)  # metric ton
+
+    # Other mass units
+    registry["carat"] = BaseUnitDecomposition(0.0002, BaseUnit.kg, 1 // 1)  # 0.2 g
+    registry["grain"] = BaseUnitDecomposition(0.00006479891, BaseUnit.kg, 1 // 1)  # 64.79891 mg
+    registry["slug"] = BaseUnitDecomposition(14.593903, BaseUnit.kg, 1 // 1)  # slug (imperial)
 
     # ========== Time Units ==========
     # Base second and common names
@@ -141,6 +193,7 @@ function build_unit_registry()
     registry["day"] = BaseUnitDecomposition(86400.0, BaseUnit.s, 1 // 1)
     registry["das"] = BaseUnitDecomposition(86400.0, BaseUnit.s, 1 // 1)  # Override: "das" = day (not decasecond)
     registry["week"] = BaseUnitDecomposition(604800.0, BaseUnit.s, 1 // 1)
+    registry["year"] = BaseUnitDecomposition(86400.0 * 365.2422, BaseUnit.s, 1 // 1)  # mean tropical year
 
     # ========== Temperature Units ==========
     # Absolute temperature scales (with offset)
@@ -157,6 +210,13 @@ function build_unit_registry()
     # ========== Dimensionless Units ==========
     # Percent (1% = 0.01 = 1/100)
     registry["%"] = BaseUnitDecomposition(0.01)
+    registry["percent"] = BaseUnitDecomposition(0.01)
+
+    # Parts per million (ppm = 10^-6)
+    registry["ppm"] = BaseUnitDecomposition(1.0e-6)
+
+    # Parts per billion (ppb = 10^-9)
+    registry["ppb"] = BaseUnitDecomposition(1.0e-9)
 
     # Currency (dollar - dimensionless for unit analysis)
     registry["\$"] = BaseUnitDecomposition(1.0)
@@ -178,12 +238,28 @@ function build_unit_registry()
         registry[prefixed_name] = BaseUnitDecomposition(8.0 * scale)
     end
 
+    # Word forms for byte units
+    registry["kilobyte"] = BaseUnitDecomposition(8.0 * 1e3)
+    registry["megabyte"] = BaseUnitDecomposition(8.0 * 1e6)
+    registry["gigabyte"] = BaseUnitDecomposition(8.0 * 1e9)
+    registry["terabyte"] = BaseUnitDecomposition(8.0 * 1e12)
+
+    # Data rate units (bits per second) - dimensionless per second (1/s)
+    data_rate_dims = Dict(BaseUnit.s => -1 // 1)
+    registry["bps"] = BaseUnitDecomposition(1.0, data_rate_dims)  # bits per second
+    registry["kbps"] = BaseUnitDecomposition(1e3, data_rate_dims)  # kilobits per second
+    registry["Mbps"] = BaseUnitDecomposition(1e6, data_rate_dims)  # megabits per second
+    registry["Gbps"] = BaseUnitDecomposition(1e9, data_rate_dims)  # gigabits per second
+
     # ========== Angle Units ==========
     registry["rad"] = BaseUnitDecomposition(1.0)  # dimensionless base
     registry["radian"] = BaseUnitDecomposition(1.0)
     registry["deg"] = BaseUnitDecomposition(π / 180.0)
     registry["degree"] = BaseUnitDecomposition(π / 180.0)
+    registry["arcminute"] = BaseUnitDecomposition(π / 180.0 / 60.0)  # 1/60 degree
+    registry["arcsecond"] = BaseUnitDecomposition(π / 180.0 / 3600.0)  # 1/3600 degree
     registry["revolution"] = BaseUnitDecomposition(2.0 * π)  # 1 revolution = 2π radians
+    registry["revolutions"] = BaseUnitDecomposition(2.0 * π)  # plural form
 
     # ========== Volume Units ==========
     # Liter (1 L = 0.001 m³)
@@ -214,6 +290,23 @@ function build_unit_registry()
         registry[prefixed_name] = BaseUnitDecomposition(0.003785411784 * scale, liter_dims)
     end
 
+    # Barrel (oil barrel, 1 barrel = 42 US gallons)
+    registry["barrel"] = BaseUnitDecomposition(0.003785411784 * 42.0, liter_dims)
+
+    # Fluid ounce (US, 1 fl oz = 1/128 gallon)
+    registry["floz"] = BaseUnitDecomposition(0.003785411784 / 128.0, liter_dims)
+    registry["fluidounce"] = BaseUnitDecomposition(0.003785411784 / 128.0, liter_dims)
+
+    # US cooking measurements
+    registry["cup"] = BaseUnitDecomposition(0.0002365882365, liter_dims)  # 236.588 mL
+    registry["tablespoon"] = BaseUnitDecomposition(0.000014786764781, liter_dims)  # ~14.787 mL
+    registry["teaspoon"] = BaseUnitDecomposition(0.000004928921594, liter_dims)  # ~4.929 mL
+    registry["pint"] = BaseUnitDecomposition(0.000473176473, liter_dims)  # 473.176 mL (US liquid pint)
+    registry["quart"] = BaseUnitDecomposition(0.000946352946, liter_dims)  # 946.353 mL (US liquid quart)
+
+    # Bushel (US dry bushel = 35.23907 L)
+    registry["bushel"] = BaseUnitDecomposition(0.03523907, liter_dims)
+
     # ========== Area Units ==========
     # Hectare (1 hectare = 10,000 m²)
     area_dims = Dict(BaseUnit.m => 2 // 1)
@@ -227,12 +320,16 @@ function build_unit_registry()
     newton_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 1 // 1, BaseUnit.s => -2 // 1)
     registry["N"] = BaseUnitDecomposition(1.0, newton_dims)
     registry["newton"] = BaseUnitDecomposition(1.0, newton_dims)
+    merge!(registry, generate_si_prefixed_derived_units("N", newton_dims))
 
     # Force: kilogram-force (kgf = 9.80665 N, force due to 1 kg mass in Earth's gravity)
     registry["kgf"] = BaseUnitDecomposition(9.80665, newton_dims)
 
     # Force: pound-force (lbf = 4.4482216 N)
     registry["lbf"] = BaseUnitDecomposition(4.4482216, newton_dims)
+
+    # Force: dyne (CGS unit, 1 dyne = 10^-5 N)
+    registry["dyne"] = BaseUnitDecomposition(1.0e-5, newton_dims)
 
     # Energy: Joule (kg⋅m²/s²)
     joule_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 2 // 1, BaseUnit.s => -2 // 1)
@@ -243,6 +340,16 @@ function build_unit_registry()
     # Energy: British thermal unit (btu = 1055.05585262 J, ISO standard)
     registry["btu"] = BaseUnitDecomposition(1055.05585262, joule_dims)
 
+    # Energy: calorie (thermochemical calorie, 1 cal = 4.184 J)
+    registry["cal"] = BaseUnitDecomposition(4.184, joule_dims)
+    registry["kcal"] = BaseUnitDecomposition(4184.0, joule_dims)
+
+    # Energy: electronvolt (eV, 1 eV = 1.602176634×10^-19 J)
+    registry["eV"] = BaseUnitDecomposition(1.602176634e-19, joule_dims)
+
+    # Energy: therm (1 therm = 99976.129 BTU, approximately 100,000 BTU thermal)
+    registry["therm"] = BaseUnitDecomposition(1055.05585262 * 99976.129, joule_dims)
+
     # Power: Watt (kg⋅m²/s³)
     watt_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 2 // 1, BaseUnit.s => -3 // 1)
     registry["W"] = BaseUnitDecomposition(1.0, watt_dims)
@@ -251,6 +358,7 @@ function build_unit_registry()
 
     # Power: horsepower (hp = 745.69987 W)
     registry["hp"] = BaseUnitDecomposition(745.69987, watt_dims)
+    registry["horsepower"] = BaseUnitDecomposition(745.69987, watt_dims)
 
     # Pressure: Pascal (kg/(m⋅s²))
     pascal_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => -1 // 1, BaseUnit.s => -2 // 1)
@@ -263,16 +371,33 @@ function build_unit_registry()
 
     # Pressure: bar (bar = 100000 Pa)
     registry["bar"] = BaseUnitDecomposition(100000.0, pascal_dims)
+    registry["microbar"] = BaseUnitDecomposition(0.1, pascal_dims)  # 1 microbar = 0.1 Pa
 
     # Pressure: pounds per square inch (psi = lbf/in² = 6894.7573 Pa)
     registry["psi"] = BaseUnitDecomposition(6894.7573, pascal_dims)
+    registry["ksi"] = BaseUnitDecomposition(6894757.3, pascal_dims)  # kilopound per square inch
 
     # Pressure: millimeters of mercury (mmHg = 133.322387415 Pa)
     registry["mmHg"] = BaseUnitDecomposition(133.322387415, pascal_dims)
 
+    # Pressure: torr (1 torr ≈ 133.32237 Pa, essentially same as mmHg)
+    registry["torr"] = BaseUnitDecomposition(133.32237, pascal_dims)
+
+    # Pressure: inches of mercury (inHg = 3386.3886 Pa)
+    registry["inHg"] = BaseUnitDecomposition(3386.3886, pascal_dims)
+
     # Dynamic viscosity: Poise (kg/(m⋅s), 1 poise = 0.1 Pa⋅s)
     poise_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => -1 // 1, BaseUnit.s => -1 // 1)
     registry["poise"] = BaseUnitDecomposition(0.1, poise_dims)
+    merge!(registry, generate_si_prefixed_derived_units("poise", poise_dims))
+
+    # Also add explicit centipoise for clarity
+    registry["centipoise"] = BaseUnitDecomposition(0.1 * 0.01, poise_dims)
+
+    # Kinematic viscosity: Stokes (cm²/s, 1 stokes = 10^-4 m²/s)
+    stokes_dims = Dict(BaseUnit.m => 2 // 1, BaseUnit.s => -1 // 1)
+    registry["stokes"] = BaseUnitDecomposition(1.0e-4, stokes_dims)
+    registry["centistokes"] = BaseUnitDecomposition(1.0e-6, stokes_dims)  # 1 centistokes = 0.01 stokes
 
     # Frequency: Hertz (1/s)
     hertz_dims = Dict(BaseUnit.s => -1 // 1)
@@ -287,15 +412,120 @@ function build_unit_registry()
     # This makes it compatible with deg/s which has factor π/180 rad/s
     registry["rpm"] = BaseUnitDecomposition(π / 30.0, hertz_dims)
 
+    # Velocity: knot (nautical mile per hour, 1 knot = 1.852 km/h = 0.514444 m/s)
+    velocity_dims = Dict(BaseUnit.m => 1 // 1, BaseUnit.s => -1 // 1)
+    registry["knot"] = BaseUnitDecomposition(0.514444, velocity_dims)
+
+    # Velocity: mach (speed of sound at sea level, approximately 331.46 m/s)
+    registry["mach"] = BaseUnitDecomposition(331.46, velocity_dims)
+
+    # Acceleration: standard gravity (g = 9.80665 m/s²)
+    acceleration_dims = Dict(BaseUnit.m => 1 // 1, BaseUnit.s => -2 // 1)
+    registry["gravity"] = BaseUnitDecomposition(9.80665, acceleration_dims)
+
     # Electric charge: Coulomb (A⋅s)
     coulomb_dims = Dict(BaseUnit.A => 1 // 1, BaseUnit.s => 1 // 1)
     registry["C"] = BaseUnitDecomposition(1.0, coulomb_dims)
     registry["coulomb"] = BaseUnitDecomposition(1.0, coulomb_dims)
+    merge!(registry, generate_si_prefixed_derived_units("C", coulomb_dims))
+
+    # Ampere-hour (A⋅h, 1 Ah = 3600 C)
+    registry["Ah"] = BaseUnitDecomposition(3600.0, coulomb_dims)
+    for (prefix, scale) in SI_PREFIXES
+        prefixed_name = prefix * "Ah"
+        registry[prefixed_name] = BaseUnitDecomposition(3600.0 * scale, coulomb_dims)
+    end
 
     # Electric potential: Volt (kg⋅m²/(A⋅s³))
     volt_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 2 // 1, BaseUnit.s => -3 // 1, BaseUnit.A => -1 // 1)
     registry["V"] = BaseUnitDecomposition(1.0, volt_dims)
     registry["volt"] = BaseUnitDecomposition(1.0, volt_dims)
+    merge!(registry, generate_si_prefixed_derived_units("V", volt_dims))
+
+    # Electric resistance: Ohm (kg⋅m²/(A²⋅s³))
+    ohm_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 2 // 1, BaseUnit.s => -3 // 1, BaseUnit.A => -2 // 1)
+    registry["Ω"] = BaseUnitDecomposition(1.0, ohm_dims)
+    registry["ohm"] = BaseUnitDecomposition(1.0, ohm_dims)
+    merge!(registry, generate_si_prefixed_derived_units("ohm", ohm_dims))
+
+    # Electric capacitance: Farad (A²⋅s⁴/(kg⋅m²))
+    farad_dims = Dict(BaseUnit.A => 2 // 1, BaseUnit.s => 4 // 1, BaseUnit.kg => -1 // 1, BaseUnit.m => -2 // 1)
+    registry["F"] = BaseUnitDecomposition(1.0, farad_dims)
+    registry["farad"] = BaseUnitDecomposition(1.0, farad_dims)
+    merge!(registry, generate_si_prefixed_derived_units("farad", farad_dims))
+    registry["microfarad"] = BaseUnitDecomposition(1.0e-6, farad_dims)
+
+    # Electric inductance: Henry (kg⋅m²/(A²⋅s²))
+    henry_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 2 // 1, BaseUnit.A => -2 // 1, BaseUnit.s => -2 // 1)
+    registry["H"] = BaseUnitDecomposition(1.0, henry_dims)
+    registry["henry"] = BaseUnitDecomposition(1.0, henry_dims)
+    merge!(registry, generate_si_prefixed_derived_units("henry", henry_dims))
+    registry["millihenry"] = BaseUnitDecomposition(1.0e-3, henry_dims)
+    registry["microhenry"] = BaseUnitDecomposition(1.0e-6, henry_dims)
+
+    # Electric conductance: Siemens (A²⋅s³/(kg⋅m²))
+    siemens_dims = Dict(BaseUnit.A => 2 // 1, BaseUnit.s => 3 // 1, BaseUnit.kg => -1 // 1, BaseUnit.m => -2 // 1)
+    registry["S"] = BaseUnitDecomposition(1.0, siemens_dims)
+    registry["siemens"] = BaseUnitDecomposition(1.0, siemens_dims)
+    registry["mho"] = BaseUnitDecomposition(1.0, siemens_dims)  # mho = inverse ohm = siemens
+
+    # Magnetic flux: Weber (kg⋅m²/(A⋅s²))
+    weber_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 2 // 1, BaseUnit.A => -1 // 1, BaseUnit.s => -2 // 1)
+    registry["Wb"] = BaseUnitDecomposition(1.0, weber_dims)
+    registry["weber"] = BaseUnitDecomposition(1.0, weber_dims)
+
+    # Maxwell (CGS unit of magnetic flux, 1 maxwell = 10^-8 Wb)
+    registry["maxwell"] = BaseUnitDecomposition(1.0e-8, weber_dims)
+
+    # Magnetic flux density: Tesla (kg/(A⋅s²))
+    tesla_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.A => -1 // 1, BaseUnit.s => -2 // 1)
+    registry["T"] = BaseUnitDecomposition(1.0, tesla_dims)
+    registry["tesla"] = BaseUnitDecomposition(1.0, tesla_dims)
+
+    # Gauss (CGS unit of magnetic flux density, 1 gauss = 10^-4 T)
+    registry["gauss"] = BaseUnitDecomposition(1.0e-4, tesla_dims)
+
+    # ========== Radiation Units ==========
+    # Radioactivity: Becquerel (1/s)
+    becquerel_dims = Dict(BaseUnit.s => -1 // 1)
+    registry["Bq"] = BaseUnitDecomposition(1.0, becquerel_dims)
+    registry["becquerel"] = BaseUnitDecomposition(1.0, becquerel_dims)
+
+    # Curie (radioactivity, 1 Ci = 3.7×10^10 Bq)
+    registry["Ci"] = BaseUnitDecomposition(3.7e10, becquerel_dims)
+    registry["curie"] = BaseUnitDecomposition(3.7e10, becquerel_dims)
+
+    # Absorbed dose: Gray (J/kg = m²/s²)
+    gray_dims = Dict(BaseUnit.m => 2 // 1, BaseUnit.s => -2 // 1)
+    registry["Gy"] = BaseUnitDecomposition(1.0, gray_dims)
+    registry["gray"] = BaseUnitDecomposition(1.0, gray_dims)
+
+    # Rad (absorbed dose, 1 rad = 0.01 Gy)
+    registry["rad"] = BaseUnitDecomposition(0.01, gray_dims)
+
+    # Equivalent dose: Sievert (J/kg = m²/s², same dimensions as Gray)
+    sievert_dims = Dict(BaseUnit.m => 2 // 1, BaseUnit.s => -2 // 1)
+    registry["Sv"] = BaseUnitDecomposition(1.0, sievert_dims)
+    registry["sievert"] = BaseUnitDecomposition(1.0, sievert_dims)
+
+    # Rem (equivalent dose, 1 rem = 0.01 Sv)
+    registry["rem"] = BaseUnitDecomposition(0.01, sievert_dims)
+
+    # ========== Catalytic Activity ==========
+    # Katal (catalytic activity: mol/s)
+    katal_dims = Dict(BaseUnit.mol => 1 // 1, BaseUnit.s => -1 // 1)
+    registry["kat"] = BaseUnitDecomposition(1.0, katal_dims)
+    registry["katal"] = BaseUnitDecomposition(1.0, katal_dims)
+
+    # ========== Textile Units (Linear Mass Density) ==========
+    # Linear mass density: kg/m
+    linear_density_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => -1 // 1)
+
+    # Tex (g/1000m = 10^-6 kg/m)
+    registry["tex"] = BaseUnitDecomposition(1.0e-6, linear_density_dims)
+
+    # Denier (g/9000m = 1/9 tex)
+    registry["denier"] = BaseUnitDecomposition(1.0e-6 / 9.0, linear_density_dims)
 
     # ========== Common Energy Units (Watt-hours) ==========
     # Watt-hour: Wh (same dimensions as Joule: kg⋅m²/s²)
