@@ -10,9 +10,23 @@ function reduce_to_base(expr::UnitExpression)::Tuple{Float64, Float64, Dict{Base
     base_dimensions = Dict{BaseUnit.T, Rational{Int}}()
 
     # Check if this is a simple unit that can have an offset
-    has_offset = length(expr.components) == 1 && expr.components[1][2] == 1 // 1
+    # Filter out coefficient markers when checking
+    non_coefficient_components = filter(c -> !startswith(c[1], "__coefficient__:"), expr.components)
+    has_offset = length(non_coefficient_components) == 1 && non_coefficient_components[1][2] == 1 // 1
 
     for (unit, exponent) in expr.components
+        # Check if this is a numeric coefficient marker
+        if startswith(unit, "__coefficient__:")
+            # Extract the numeric value and apply with the exponent
+            coef_str = unit[length("__coefficient__:")+1:end]
+            coefficient = parse(Float64, coef_str)
+            # Apply coefficient with exponent: coefficient^exponent
+            # If exponent=1 (numerator): multiply by coefficient
+            # If exponent=-1 (denominator): divide by coefficient
+            total_factor *= coefficient^Float64(exponent)
+            continue
+        end
+
         # Get the base decomposition for this unit
         decomp = get_base_decomposition(unit)
 

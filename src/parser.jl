@@ -45,14 +45,15 @@ function expand_implicit_exponents(s::AbstractString)::String
     while i <= length(chars)
         c = chars[i]
 
-        # If we find a digit that's not preceded by '^', it's an implicit exponent
+        # If we find a digit that's not preceded by '^', it might be an implicit exponent
         if isdigit(c)
             # Check if it's preceded by '^' (explicit exponent)
             if i > 1 && chars[i-1] == '^'
                 # This is an explicit exponent, keep it as is
                 write(result, c)
                 i += 1
-            else
+            # Check if it's preceded by a letter or ')' (unit name or parenthesized expression)
+            elseif i > 1 && (isletter(chars[i-1]) || chars[i-1] == ')')
                 # This is an implicit exponent - collect all consecutive digits
                 write(result, '^')
                 while i <= length(chars) && isdigit(chars[i])
@@ -60,6 +61,10 @@ function expand_implicit_exponents(s::AbstractString)::String
                     i += 1
                 end
                 continue
+            else
+                # This is a leading digit (coefficient) or digit after another digit, keep as is
+                write(result, c)
+                i += 1
             end
         else
             write(result, c)
@@ -206,6 +211,25 @@ function parse_single_unit(token::AbstractString, sign::Int)::Vector{Tuple{Strin
         catch
             # Not a valid number, continue parsing as unit
         end
+    end
+
+    # Check if token starts with a numeric coefficient (like "100mi", "2.5kg")
+    # Extract coefficient and unit separately
+    coefficient_match = match(r"^([\d.]+)(.*)", token_stripped)
+    if coefficient_match !== nothing && !isempty(coefficient_match.captures[2])
+        # Has both a number and a unit part
+        coef_str = coefficient_match.captures[1]
+        unit_part = coefficient_match.captures[2]
+
+        # Parse the unit part
+        unit_components = parse_single_unit(unit_part, sign)
+
+        # Store the coefficient as a special "numeric" component with the sign
+        # The sign determines if this coefficient is in numerator (1) or denominator (-1)
+        result = Tuple{String, Rational{Int}}[]
+        push!(result, ("__coefficient__:$coef_str", sign * (1 // 1)))
+        append!(result, unit_components)
+        return result
     end
 
     # Check if this is a compound expression (had outer parens and contains * or /)
