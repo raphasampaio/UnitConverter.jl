@@ -233,6 +233,7 @@ function build_unit_registry()
 
     # Currency (dollar - dimensionless for unit analysis)
     registry["\$"] = BaseUnitDecomposition(1.0)
+    registry["dollar"] = BaseUnitDecomposition(1.0)
 
     # SI-prefixed dollars (T$, G$, M$, k$, etc.)
     for (prefix, scale) in SI_PREFIXES
@@ -382,8 +383,27 @@ function build_unit_registry()
     registry["cal"] = BaseUnitDecomposition(4.184, joule_dims)
     registry["kcal"] = BaseUnitDecomposition(4184.0, joule_dims)
 
+    # Energy per area: langley (1 langley = 1 cal/cm^2 = 41840 J/m^2)
+    langley_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.s => -2 // 1)
+    registry["langley"] = BaseUnitDecomposition(41840.0, langley_dims)
+
     # Energy: electronvolt (eV, 1 eV = 1.602176634×10^-19 J)
     registry["eV"] = BaseUnitDecomposition(1.602176634e-19, joule_dims)
+    registry["MeV"] = BaseUnitDecomposition(1.602176634e-13, joule_dims)
+    registry["GeV"] = BaseUnitDecomposition(1.602176634e-10, joule_dims)
+    registry["TeV"] = BaseUnitDecomposition(1.602176634e-7, joule_dims)
+
+    # Energy: erg (CGS unit, 1 erg = 10^-7 J)
+    registry["erg"] = BaseUnitDecomposition(1.0e-7, joule_dims)
+
+    # Energy: quad (1 quad = 1.0550559×10^18 J)
+    registry["quad"] = BaseUnitDecomposition(1.0550559e18, joule_dims)
+
+    # Energy: hartree (atomic unit of energy, 1 hartree = 27.211386 eV)
+    registry["hartree"] = BaseUnitDecomposition(27.211386 * 1.602176634e-19, joule_dims)
+
+    # Energy: rydberg (atomic unit of energy, 1 rydberg = 13.605693 eV)
+    registry["rydberg"] = BaseUnitDecomposition(13.605693 * 1.602176634e-19, joule_dims)
 
     # Energy: therm (1 therm = 99976.129 BTU, approximately 100,000 BTU thermal)
     registry["therm"] = BaseUnitDecomposition(1055.05585262 * 99976.129, joule_dims)
@@ -397,6 +417,14 @@ function build_unit_registry()
     # Power: horsepower (hp = 745.69987 W)
     registry["hp"] = BaseUnitDecomposition(745.69987, watt_dims)
     registry["horsepower"] = BaseUnitDecomposition(745.69987, watt_dims)
+
+    # Power: word forms for SI-prefixed watts
+    registry["milliwatt"] = BaseUnitDecomposition(0.001, watt_dims)
+    registry["microwatt"] = BaseUnitDecomposition(1.0e-6, watt_dims)
+    registry["nanowatt"] = BaseUnitDecomposition(1.0e-9, watt_dims)
+
+    # Power: ton refrigeration (1 ton = 3.5168528 kW, cooling capacity)
+    registry["tonrefrigeration"] = BaseUnitDecomposition(3516.8528, watt_dims)
 
     # Pressure: Pascal (kg/(m⋅s²))
     pascal_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => -1 // 1, BaseUnit.s => -2 // 1)
