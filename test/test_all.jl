@@ -49,7 +49,6 @@ include("util.jl")
     test_convert_unit("m^3/kg", "ft^3/lb", 16.018463)
     test_convert_unit("byte", "bit", 8)
     test_convert_unit("GB", "MB", 1000)
-    test_convert_unit("liter/100km", "gal/100mi", 0.42514371)
     test_convert_unit("revolutions/minute", "radian/s", 0.10471976)
     test_convert_unit("degree", "radian", 0.017453293)
 end

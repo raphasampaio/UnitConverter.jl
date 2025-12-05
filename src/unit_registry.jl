@@ -123,6 +123,7 @@ function build_unit_registry()
     registry["pound"] = BaseUnitDecomposition(0.45359237, BaseUnit.kg, 1 // 1)
     registry["oz"] = BaseUnitDecomposition(0.028349523125, BaseUnit.kg, 1 // 1)
     registry["ounce"] = BaseUnitDecomposition(0.028349523125, BaseUnit.kg, 1 // 1)
+    registry["ton"] = BaseUnitDecomposition(907.18474, BaseUnit.kg, 1 // 1)  # US short ton (2000 lb)
 
     # ========== Time Units ==========
     # Base second and common names
@@ -166,11 +167,23 @@ function build_unit_registry()
         registry[prefixed_name] = BaseUnitDecomposition(scale)
     end
 
+    # Digital information units (dimensionless)
+    registry["bit"] = BaseUnitDecomposition(1.0)
+    registry["byte"] = BaseUnitDecomposition(8.0)  # 1 byte = 8 bits
+    registry["B"] = BaseUnitDecomposition(8.0)     # Short form for byte
+
+    # SI-prefixed bytes (TB, GB, MB, kB, etc.) - using decimal (SI) prefixes, not binary
+    for (prefix, scale) in SI_PREFIXES
+        prefixed_name = prefix * "B"
+        registry[prefixed_name] = BaseUnitDecomposition(8.0 * scale)
+    end
+
     # ========== Angle Units ==========
     registry["rad"] = BaseUnitDecomposition(1.0)  # dimensionless base
     registry["radian"] = BaseUnitDecomposition(1.0)
     registry["deg"] = BaseUnitDecomposition(π / 180.0)
     registry["degree"] = BaseUnitDecomposition(π / 180.0)
+    registry["revolution"] = BaseUnitDecomposition(2.0 * π)  # 1 revolution = 2π radians
 
     # ========== Volume Units ==========
     # Liter (1 L = 0.001 m³)
@@ -201,6 +214,14 @@ function build_unit_registry()
         registry[prefixed_name] = BaseUnitDecomposition(0.003785411784 * scale, liter_dims)
     end
 
+    # ========== Area Units ==========
+    # Hectare (1 hectare = 10,000 m²)
+    area_dims = Dict(BaseUnit.m => 2 // 1)
+    registry["hectare"] = BaseUnitDecomposition(10000.0, area_dims)
+
+    # Acre (1 acre = 4046.8564224 m²)
+    registry["acre"] = BaseUnitDecomposition(4046.8564224, area_dims)
+
     # ========== Derived SI Units ==========
     # Force: Newton (kg⋅m/s²)
     newton_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 1 // 1, BaseUnit.s => -2 // 1)
@@ -218,6 +239,9 @@ function build_unit_registry()
     registry["J"] = BaseUnitDecomposition(1.0, joule_dims)
     registry["joule"] = BaseUnitDecomposition(1.0, joule_dims)
     merge!(registry, generate_si_prefixed_derived_units("J", joule_dims))
+
+    # Energy: British thermal unit (btu = 1055.05585262 J, ISO standard)
+    registry["btu"] = BaseUnitDecomposition(1055.05585262, joule_dims)
 
     # Power: Watt (kg⋅m²/s³)
     watt_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => 2 // 1, BaseUnit.s => -3 // 1)
@@ -242,6 +266,13 @@ function build_unit_registry()
 
     # Pressure: pounds per square inch (psi = lbf/in² = 6894.7573 Pa)
     registry["psi"] = BaseUnitDecomposition(6894.7573, pascal_dims)
+
+    # Pressure: millimeters of mercury (mmHg = 133.322387415 Pa)
+    registry["mmHg"] = BaseUnitDecomposition(133.322387415, pascal_dims)
+
+    # Dynamic viscosity: Poise (kg/(m⋅s), 1 poise = 0.1 Pa⋅s)
+    poise_dims = Dict(BaseUnit.kg => 1 // 1, BaseUnit.m => -1 // 1, BaseUnit.s => -1 // 1)
+    registry["poise"] = BaseUnitDecomposition(0.1, poise_dims)
 
     # Frequency: Hertz (1/s)
     hertz_dims = Dict(BaseUnit.s => -1 // 1)
