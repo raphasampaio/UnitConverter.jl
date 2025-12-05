@@ -52,7 +52,7 @@ function expand_implicit_exponents(s::AbstractString)::String
                 # This is an explicit exponent, keep it as is
                 write(result, c)
                 i += 1
-            # Check if it's preceded by a letter or ')' (unit name or parenthesized expression)
+                # Check if it's preceded by a letter or ')' (unit name or parenthesized expression)
             elseif i > 1 && (isletter(chars[i-1]) || chars[i-1] == ')')
                 # This is an implicit exponent - collect all consecutive digits
                 write(result, '^')
