@@ -37,11 +37,11 @@ using UnitConverter
 
 # Convert Celsius to Fahrenheit
 result = convert_unit(25.0, "degC", "degF")
-println("25°C = $result°F")  # 25°C = 77.0°F
+println("25 °C = $result °F")  # 25 °C = 77.0 °F
 
 # Convert Fahrenheit to Kelvin
 result = convert_unit(98.6, "degF", "K")
-println("98.6°F = $result K")  # 98.6°F = 310.15 K
+println("98.6 °F = $result K")  # 98.6 °F = 310.15 K
 ```
 
 ### Example 3: Energy and Power Conversions
